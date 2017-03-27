@@ -1,4 +1,5 @@
 import sys
+import datetime
 import spotipy
 import spotipy.util as util
 
@@ -39,11 +40,19 @@ def display_playlist_tracks(sp, playlist_id):
 	while tracks["next"]:
 		tracks = sp.next(tracks)
 		show_tracks(tracks)
+
+# returns min: the year the user was 15, and max: the year the user was 25		
+def get_year_range(age):
+	current_year = datetime.datetime.today().year
+	min = current_year - age + 15
+	max = current_year - age + 25
+	return min, max
 	
 	
 if __name__ == '__main__':
 	sp = authenticate_user("fcurrin")
 	#display_playlists(sp)
 	#print(sp.recommendation_genre_seeds())
-	new_playlist = create_playlist(sp, "01test", genres=["classical", "opera", "happy"])
-	display_playlist_tracks(sp, new_playlist)
+	#new_playlist = create_playlist(sp, "01test", genres=["classical", "opera", "happy"])
+	#display_playlist_tracks(sp, new_playlist)
+	print(get_year_range(94))
