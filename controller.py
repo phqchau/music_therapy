@@ -69,7 +69,7 @@ def albums_from_year_range(sp, range):
 		for artist in album['artists']:
 			print(artist['name'])
 	
-def albums_from_year_range_and_genre(sp, range, genre):
+def artists_from_year_range_and_genre(sp, range, genre):
 	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=50)
 	#print(results)
 
@@ -122,16 +122,16 @@ if __name__ == '__main__':
 	#display_playlist_tracks(sp, new_playlist)
 	range = get_year_range(90)
 	print('jazz artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'jazz')
+	artists_from_year_range_and_genre(sp, range, 'jazz')
 	print('big band artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'big band')
+	artists_from_year_range_and_genre(sp, range, 'big band')
 	print('classical artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'classical')
+	artists_from_year_range_and_genre(sp, range, 'classical')
 	
 	range = get_year_range(75)
 	print('jazz artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'jazz')
+	artists_from_year_range_and_genre(sp, range, 'jazz')
 	print('big band artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'big band')
+	artists_from_year_range_and_genre(sp, range, 'big band')
 	print('classical artists for ' + str(range))
-	albums_from_year_range_and_genre(sp, range, 'classical')
+	artists_from_year_range_and_genre(sp, range, 'classical')
