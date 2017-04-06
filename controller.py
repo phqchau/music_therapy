@@ -4,10 +4,10 @@ import spotipy
 import spotipy.util as util
 
 
-SPOTIPY_CLIENT_ID = 'e080565ae7b6446586dc8431f57358a6'
-SPOTIPY_CLIENT_SECRET = 'secret goes here ;)'
+SPOTIPY_CLIENT_ID = 'your-id'
+SPOTIPY_CLIENT_SECRET = 'your-secret'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8080'
-SCOPE = 'user-library-read'
+SCOPE = 'playlist-read-private playlist-modify-private'
 CACHE = '.spotipyoauthcache'
 
 debug = False
@@ -30,15 +30,30 @@ def display_playlists(sp):
 	for playlist in playlists["items"]:
 		print(playlist["name"])
 		
-def create_playlist(sp, name, artists=None, genres=None, tracks=None):
-	userID = sp.current_user()["id"]
-	playlist = sp.user_playlist_create(userID, name, public=False)
+def create_playlist(sp, name, age, genres, artists=None, tracks=None):
+	user_id = sp.current_user()["id"]
+	playlist = sp.user_playlist_create(user_id, name, public=False)
 	playlist_id = playlist["id"]
-	recommended_tracks = sp.recommendations(artists, genres, tracks)
+	
+	year_range = get_year_range(age)
+	
+	if artists:
+		artists = artists + artists_from_year_range_and_genres(sp, year_range, genres)
+	else:
+		artists = artists_from_year_range_and_genres(sp, year_range, genres)
+	
+	recommended_tracks = []
+	i = 0
+	while(i + 5 < len(artists)):
+		recommended_tracks += sp.recommendations(seed_artists=artists[i:i+5], limit=10)["tracks"]
+		i += 5
+	recommended_tracks += sp.recommendations(seed_artists=artists[i:], limit=10)["tracks"]
+	
 	track_uris = []
-	for track in recommended_tracks["tracks"]:
+	for track in recommended_tracks:
 		track_uris.append(track["uri"])
-	sp.user_playlist_add_tracks(userID, playlist_id, track_uris)
+	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+	
 	return playlist_id
 	
 def display_playlist_tracks(sp, playlist_id):
@@ -69,7 +84,7 @@ def albums_from_year_range(sp, range):
 		for artist in album['artists']:
 			print(artist['name'])
 	
-def artists_from_year_range_and_genre(sp, range, genre):
+def artists_from_year_range_and_genres(sp, range, genres):
 	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=50)
 	#print(results)
 
@@ -77,31 +92,31 @@ def artists_from_year_range_and_genre(sp, range, genre):
 		print(results)
 	albums = results['albums']['items']
 
-	artists = {}
+	artists = []
 	for album in albums:
 		if debug:
 			print(album['name'])
 		for artist in album['artists']:
-			if artist['name'] not in artists:
+			if artist['id'] not in artists:
 				if debug:
 					print(artist['name'])
-				artists[artist['name']] = artist['id']
+				artists.append(artist['id'])
 	if debug:
 		print(artists)
 	
 	bad_artists = []
 			
-	for artist in artists:
-		current_artist = sp.artist(artists[artist])
+	for id in artists:
+		current_artist = sp.artist(id)
 		if debug:
 			print(current_artist['genres'])
-		if genre not in current_artist['genres']:
-			bad_artists.append(artist)
+		if set(genres).isdisjoint(set(current_artist['genres'])):
+			bad_artists.append(current_artist['id'])
 	
 	for artist in bad_artists:		
-		del artists[artist]
+		artists.remove(artist)
 			
-	print(artists)
+	return artists
 
 			
 '''			
@@ -114,24 +129,13 @@ use genre, random 4 artists from new list for recommendation seeds
 '''			
 	
 if __name__ == '__main__':
-	sp = authenticate_user("il3eli")
+	sp = authenticate_user("fcurrin")
 	#debug = True
 	#display_playlists(sp)
 	#print(sp.recommendation_genre_seeds())
-	#new_playlist = create_playlist(sp, "01test", genres=["classical", "opera", "happy"])
-	#display_playlist_tracks(sp, new_playlist)
-	range = get_year_range(90)
-	print('jazz artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'jazz')
-	print('big band artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'big band')
-	print('classical artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'classical')
 	
-	range = get_year_range(75)
-	print('jazz artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'jazz')
-	print('big band artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'big band')
-	print('classical artists for ' + str(range))
-	artists_from_year_range_and_genre(sp, range, 'classical')
+	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
+	display_playlist_tracks(sp, new_playlist)
+	
+	new_playlist = create_playlist(sp, "test_artists_75", 75, ["jazz", "big band", "classical"])
+	display_playlist_tracks(sp, new_playlist)
