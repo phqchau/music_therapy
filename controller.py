@@ -126,10 +126,20 @@ for each artist:
 	for each genre:
 		check if it's one of the approved ones, if so put artist in new list
 use genre, random 4 artists from new list for recommendation seeds
-'''			
+'''		
+
+def upvote(sp, playlist_id, track):
+	user_id = sp.current_user()["id"]
+	
+	recommended_tracks = sp.recommendations(seed_tracks=[track], limit=5)["tracks"]	
+	track_uris = []
+	for track in recommended_tracks:
+		track_uris.append(track["uri"])
+	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
 	
 if __name__ == '__main__':
 	sp = authenticate_user("fcurrin")
+	user_id = sp.current_user()["id"]
 	#debug = True
 	#display_playlists(sp)
 	#print(sp.recommendation_genre_seeds())
@@ -137,5 +147,5 @@ if __name__ == '__main__':
 	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
 	display_playlist_tracks(sp, new_playlist)
 	
-	new_playlist = create_playlist(sp, "test_artists_75", 75, ["jazz", "big band", "classical"])
-	display_playlist_tracks(sp, new_playlist)
+	#new_playlist = create_playlist(sp, "test_artists_75", 75, ["jazz", "big band", "classical"])
+	#display_playlist_tracks(sp, new_playlist)
