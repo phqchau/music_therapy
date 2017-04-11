@@ -44,7 +44,7 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
 	
 	recommended_tracks = []
 	i = 0
-	if len(artists > 0):
+	if len(artists) > 0:
 		while(i + 5 < len(artists)):
 			recommended_tracks += sp.recommendations(seed_artists=artists[i:i+5], limit=10)["tracks"]
 			i += 5
