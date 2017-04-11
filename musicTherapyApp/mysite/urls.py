@@ -20,5 +20,4 @@ urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^callback.html/', include('polls.urls')),
-    url(r'^polls/about.html', include('polls.urls')),
 ]
