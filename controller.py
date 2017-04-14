@@ -53,28 +53,28 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
 	for track in recommended_tracks[:29]:
             track_uris = []
 	    track_uris.append(track["uri"])
-	    name += "1"
-	    playlist = sp.user_playlist_create(user_id, name, public=False)
-	    playlist_id = playlist["id"]
-            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+	nameOne += "1"
+	playlistOne = sp.user_playlist_create(user_id, nameOne, public=False)
+	playlist_id_one = playlistOne["id"]
+        sp.user_playlist_add_tracks(user_id, playlist_id_one, track_uris)
 
         for track in recommended_tracks[30:59]:
             track_uris = []
             track_uris.append(track["uri"])
-	    name += "2"
-            playlist = sp.user_playlist_create(user_id, name, public=False)
-	    playlist_id = playlist["id"]
-            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+	nameTwo += "2"
+        playlist = sp.user_playlist_create(user_id, nameTwo, public=False)
+	playlist_id_two = playlist["id"]
+        sp.user_playlist_add_tracks(user_id, playlist_id_two, track_uris)
 
         for track in recommended_tracks[60:]:
             track_uris = []
             track_uris.append(track["uri"])
-	    name += "3"
-	    playlist = sp.user_playlist_create(user_id, name, public=False)
-	    playlist_id = playlist["id"]
-            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+	nameThree += "3"
+	playlist = sp.user_playlist_create(user_id, name, public=False)
+	playlist_id_three = playlist["id"]
+        sp.user_playlist_add_tracks(user_id, playlist_id_three, track_uris)
                 
-	return playlist_id
+	return (playlist_id_one, playlist_id_two, playlist_id_three) 
 	
 def display_playlist_tracks(sp, playlist_id):
 	userID = sp.current_user()["id"]
@@ -163,9 +163,14 @@ if __name__ == '__main__':
 	#debug = True
 	#display_playlists(sp)
 	#print(sp.recommendation_genre_seeds())
-	
-	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
-	display_playlist_tracks(sp, new_playlist)
+
+	new_playlist_one = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])[0]
+	new_playlist_two = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])[1]
+	new_playlist_three = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])[2]
+    
+	display_playlist_tracks(sp, new_playlist_one)
+	display_playlist_tracks(sp, new_playlist_two)
+	display_playlist_tracks(sp, new_playlist_three)
 	
 	#new_playlist = create_playlist(sp, "test_artists_75", 75, ["jazz", "big band", "classical"])
 	#display_playlist_tracks(sp, new_playlist)
