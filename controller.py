@@ -56,23 +56,24 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
         nameOne = name
         nameTwo = name
         nameThree = name
-	    
+        
+	track_uris = []    
 	for track in recommended_tracks[:29]:
-            track_uris = []
 	    track_uris.append(track["uri"])
 	nameOne += "1"
 	playlistOne = sp.user_playlist_create(user_id, nameOne, public=False)
 	playlist_id_one = playlistOne["id"]
         sp.user_playlist_add_tracks(user_id, playlist_id_one, track_uris)
 
+        track_uris = []
         for track in recommended_tracks[30:59]:
-            track_uris = []
             track_uris.append(track["uri"])
 	nameTwo += "2"
         playlist = sp.user_playlist_create(user_id, nameTwo, public=False)
 	playlist_id_two = playlist["id"]
         sp.user_playlist_add_tracks(user_id, playlist_id_two, track_uris)
 
+        track_uris = []
         for track in recommended_tracks[60:]:
             track_uris = []
             track_uris.append(track["uri"])
