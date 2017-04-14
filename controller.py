@@ -33,34 +33,48 @@ def display_playlists(sp):
 		
 def create_playlist(sp, name, age, genres, artists=None, tracks=None):
 	user_id = sp.current_user()["id"]
-	i = 0
-	for i in range(2):
-            number = str(i) + "1"
-            name += number
+
+	year_range = get_year_range(age)
+	
+	if artists:
+	    artists = artists + artists_from_year_range_and_genres(sp, year_range, genres)
+	else:
+	    artists = artists_from_year_range_and_genres(sp, year_range, genres)
+	
+	recommended_tracks = []
+        j = 0
+	if len(artists) > 0:
+	    while(j + 5 < len(artists)):
+		recommended_tracks += sp.recommendations(seed_artists=artists[j:j+5], limit=30)["tracks"]
+		j += 5
+		recommended_tracks += sp.recommendations(seed_artists=artists[j:], limit=30)["tracks"]
+	recommended_tracks = sp.recommendations(seed_genres = genres, seed_tracks = tracks, limit=90)["tracks"]
+	    
+	for track in recommended_tracks[:29]:
+            track_uris = []
+	    track_uris.append(track["uri"])
+	    name += "1"
+	    playlist = sp.user_playlist_create(user_id, name, public=False)
+	    playlist_id = playlist["id"]
+            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+
+        for track in recommended_tracks[30:59]:
+            track_uris = []
+            track_uris.append(track["uri"])
+	    name += "1"
             playlist = sp.user_playlist_create(user_id, name, public=False)
-            playlist_id = playlist["id"]
-	
-	    year_range = get_year_range(age)
-	
-	    if artists:
-		artists = artists + artists_from_year_range_and_genres(sp, year_range, genres)
-	    else:
-		artists = artists_from_year_range_and_genres(sp, year_range, genres)
-	
-	    recommended_tracks = []
-	    j = 0
-	    if len(artists) > 0:
-		while(j + 5 < len(artists)):
-		    recommended_tracks += sp.recommendations(seed_artists=artists[j:j+5], limit=10)["tracks"]
-		    j += 5
-		    recommended_tracks += sp.recommendations(seed_artists=artists[j:], limit=10)["tracks"]
-	    recommended_tracks = sp.recommendations(seed_genres = genres, seed_tracks = tracks, limit=30)["tracks"]
-	    track_uris = []
-	    for track in recommended_tracks:
-		track_uris.append(track["uri"])
-	    sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
-	
-	    return playlist_id
+	    playlist_id = playlist["id"]
+            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+
+        for track in recommended_tracks[60:]:
+            track_uris = []
+            track_uris.append(track["uri"])
+	    name += "1"
+	    playlist = sp.user_playlist_create(user_id, name, public=False)
+	    playlist_id = playlist["id"]
+            sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+                
+	return playlist_id
 	
 def display_playlist_tracks(sp, playlist_id):
 	userID = sp.current_user()["id"]
