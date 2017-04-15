@@ -4,8 +4,8 @@ import spotipy
 import spotipy.util as util
 
 
-SPOTIPY_CLIENT_ID = 'your-id'
-SPOTIPY_CLIENT_SECRET = 'your-secret'
+SPOTIPY_CLIENT_ID = '9da0c8416b0e429a858497713be2b92a'
+SPOTIPY_CLIENT_SECRET = 'a73170daa78142a1a22371cbe7c9f8f2'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8080'
 SCOPE = 'playlist-read-private playlist-modify-private'
 CACHE = '.spotipyoauthcache'
@@ -143,10 +143,12 @@ if __name__ == '__main__':
 	user_id = sp.current_user()["id"]
 	#debug = True
 	#display_playlists(sp)
-	#print(sp.recommendation_genre_seeds())
+	file = open("genres", "w")
+	file.write(str(sp.recommendation_genre_seeds()))
+	file.close()
 	
-	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
-	display_playlist_tracks(sp, new_playlist)
+	#new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
+	#display_playlist_tracks(sp, new_playlist)
 	
 	#new_playlist = create_playlist(sp, "test_artists_75", 75, ["jazz", "big band", "classical"])
 	#display_playlist_tracks(sp, new_playlist)
