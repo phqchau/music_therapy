@@ -1,0 +1,69 @@
+{% load static %}
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
+</head>
+
+<div class="center">
+<h2>Please enter the details for playlist creation</h2>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'music:chooseArtists' %}" method="post">
+{% csrf_token %}
+	<p>Playlist Name:</p><input type="text" name="playlistName">
+	<p>Age:</p><input type="number" name="age" min="1" max="110">
+	{% if genres %}
+	<p>Genres (choose up to five):</p><select name="genres1">
+		<option value='none' selected>none</option>
+		{% for genre in genres %}
+		<option value="{{genre}}">{{genre}}</option>
+		{% endfor %}
+	</select>
+	<select name="genres2">
+		<option value='none' selected>none</option>
+		{% for genre in genres %}
+		<option value="{{genre}}">{{genre}}</option>
+		{% endfor %}
+	</select>
+	<select name="genres3">
+		<option value='none' selected>none</option>
+		{% for genre in genres %}
+		<option value="{{genre}}">{{genre}}</option>
+		{% endfor %}
+	</select>
+	<select name="genres4">
+		<option value='none' selected>none</option>
+		{% for genre in genres %}
+		<option value="{{genre}}">{{genre}}</option>
+		{% endfor %}
+	</select>
+	<select name="genres5">
+		<option value='none' selected>none</option>
+		{% for genre in genres %}
+		<option value="{{genre}}">{{genre}}</option>
+		{% endfor %}
+	</select>
+	{% endif %}
+
+	{% if artists %}
+	Artists: <select name="artists" multiple>
+		{% for artist in artists %}
+		<option value="{{artist}}"></option>
+		{% endfor %}
+	</select>
+	{% endif %}
+
+	{% if tracks %}
+	Tracks: <select name="tracks" multiple>
+		{% for track in tracks %}
+		<option value="{{track}}"></option>
+		{% endfor %}
+	</select>
+	{% endif %}
+<!-- Name, Age, Genre, Artists, Tracks-->
+	<p><input type="submit" value="Create Playlist"></p>
+</form>
+</div>
+</html>

@@ -1,0 +1,25 @@
+<html>
+<h1>Stuff</h1>
+
+<script>
+function parseHash(String URL){
+	var start_index = URL.indexOf("access_token=");
+	var end_index = URL.indexOf("&");
+
+	var access_token = URL.substring(start_index, end_index);
+	return access_token;
+</script>
+<script>
+function getAccessToken(){
+        var spotifyAccessToken = parseHash(String(window.location.hash));
+        localStorage.clear();
+        localStorage.setItem('accessToken', spotifyAccessToken);
+});
+</script>
+<script>
+window.onload = function() {
+        console.log("stuff");
+        getAccessToken();
+}
+</script>
+</html>

@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
+</head>
+
+<div class="center">
+	<h2>Please enter the details for playlist creation</h2>
+
+	{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+	<form action="{% url 'music:processPlaylist' %}" method="post">
+		{% csrf_token %}
+		{% if artists %}
+		<p>Recommended Artists (choose up to five):</p>
+		<select name="artists1">
+		<option value='none' selected>none</option>
+		{% for artist in artists %}
+		<option value="{{artist}}">{{artist}}</option>
+		{% endfor %}
+		</select>
+		<select name="artists2">
+		<option value='none' selected>none</option>
+		{% for artist in artists %}
+		<option value="{{artist}}">{{artist}}</option>
+		{% endfor %}
+		</select>
+		<select name="artists3">
+		<option value='none' selected>none</option>
+		{% for artist in artists %}
+		<option value="{{artist}}">{{artist}}</option>
+		{% endfor %}
+		</select>
+		<select name="artists4">
+		<option value='none' selected>none</option>
+		{% for artist in artists %}
+		<option value="{{artist}}">{{artist}}</option>
+		{% endfor %}
+		</select>
+		<select name="artists5">
+		<option value='none' selected>none</option>
+		{% for artist in artists %}
+		<option value="{{artist}}">{{artist}}</option>
+		{% endfor %}
+		</select>
+		{% endif %}
+		<p><input type="submit" value="Create Playlist"></p>
+</form>
+</div>
+</html>

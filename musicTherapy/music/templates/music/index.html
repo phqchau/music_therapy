@@ -1,0 +1,32 @@
+{% load static %}
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
+</head>
+
+<div class="center">
+<h1 align="center">Music From Your Past</h1>
+<h2 align="center">music as memory therapy</h2>
+<a href="javascript:loginSpotify();" class="button">Log In With Your Spotify Account</a>
+</div>
+
+<script type="text/javascript">
+	var loginSpotify = function(){
+        var SPOTIPY_CLIENT_ID = "52451274c0ed4367af773d2d957f5566"
+        var SPOTIPY_REDIRECT_URI = "http://localhost:8000/music/createPlaylist/"
+        var spotifyScope = "playlist-read-private"
+        var spotifyAuthEndpoint = "https://accounts.spotify.com/authorize?"+"client_id="+SPOTIPY_CLIENT_ID+"&redirect_uri="+SPOTIPY_REDIRECT_URI+"&scope="+spotifyScope+"&response_type=token&state=123";
+        window.open(spotifyAuthEndpoint,"_self");
+        //This event listener will trigger once your callback page adds the token to localStorage
+        window.addEventListener("storage",function(event){
+            if (event.key == "accessToken"){
+                var spAccessToken = event.newValue;
+                console.log(spAccessToken);
+                window.open('http://localhost:8000/music/createPlaylist/',"_self");
+                //do things with spotify API using your access token here!!
+            }
+        });
+    }
+</script>
+</html>
