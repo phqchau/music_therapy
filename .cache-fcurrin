@@ -1,9 +1,1 @@
-<<<<<<< HEAD
-{"access_token": "BQAswMEKPhY5Vd868RdpSPIHRvpqub7RnusiaG7LpjHSUr7Sh76qwqn5g9pPOqJEGAVTKQxpO3R-NKCGzjVa-7karyBxBZeoMxCy_5IsGnhL4N1ERhfa7EfbX24NCHDlmyevp2X7JXbbTF9r3B8TmXUqONSAo9l_NFI_0N0VUwiTJR0Rax-hxuq9hT3OOltbRoKmvTo", "token_type": "Bearer", "expires_in": 3600, "scope": "playlist-modify-private playlist-read-private", "expires_at": 1491883516, "refresh_token": "AQCdbTh7cab7oeb5FFMWoeMR6vhqYiU3Iy3tk9B_yrpsdt90y2ARN1GtOypR76rGA3Z6dJpgDDMZIFiBuBFhaQhjjxVb0bTIqA-eLdPUc0ZF6H_X-vNq_PB8NY4tEkjfkgM"}
-=======
-<<<<<<< Updated upstream
-{"access_token": "BQA9JCTvipShRpY7gtQTU0YZo0ZgoYfM6SRiLJJVsv-YAH992JJNtmNobxFrQ5-UyvP_dR3j7VKsXZxf1gMM2lKrBbpH0yYUiJG_DAksHy9wghvd8tV8W2WcbYpozsvJzsaX69v8h3w6ebUEM96Lp6SrtWJEwC8kKy8xmZ8aoV3rN70NAXW10BFb6bnfgGCEUUmxxRQ", "token_type": "Bearer", "expires_in": 3600, "scope": "playlist-modify-private playlist-read-private", "expires_at": 1491666795, "refresh_token": "AQCdbTh7cab7oeb5FFMWoeMR6vhqYiU3Iy3tk9B_yrpsdt90y2ARN1GtOypR76rGA3Z6dJpgDDMZIFiBuBFhaQhjjxVb0bTIqA-eLdPUc0ZF6H_X-vNq_PB8NY4tEkjfkgM"}
-=======
-{"access_token": "BQB6ENunOoexJPTLLTVYprg8QrIE4r_oFROwb999svkjtaS4ISDUAVXxKMsfsXajGuBvaVkUU2B-j7xf1zf8CSzywwpzqRtiRm-2HK_ZtF2m0VIj1xiOgskkjWDOFTx-ZhBSQvjWeNnBo5vY7IOLpUbtBkgZETOMiJ-6jlO599Kj-Pp7OKs7Y5t37E__KIFv0DnSiR2qUAkkQ8N9wagbpbDcG7sg0Hg", "token_type": "Bearer", "expires_in": 3600, "refresh_token": "AQBtUbXpeJ_um0jmZawnXSc-KExy395KUXIiyfgpl9oXuGvSyiHe83Q2ptxJIZ27v4c0RZvc1VEdH3Uzk4dO4Nh4wfiq51yyMEei_xYfM77qTCKQEVAAAmYmVyxtDs-hL9I", "scope": "playlist-modify-private playlist-read-private", "expires_at": 1491865713}
->>>>>>> Stashed changes
->>>>>>> 0aaa93d3e1df8e88b9da7ce93b69c609c4a857de
+{"access_token": "BQBwylEIi4h6Sd-dhGE0F3CCFeCGbbJCiXFOk-YTCrXxaEFElt57YXm-ETGUYElgP5ybuQNdTOyTojrnl0yoRrJxK_vIiCuSYVh8Bq5ln2pjfcvw6Rbypf1vmVpruip10s3MWJ2t5C5aLosdvVfqfX_wAyTJ535OBXOMgJo3rU8jFV_KURnZ7xh8A5GW5Enqm2Vij10", "token_type": "Bearer", "expires_in": 3600, "refresh_token": "AQB11uoXtQh4kGqOD0a3_xInhn5uoDBpYxXJcxamjRrrZdc8C5AdIAQnRt2Y0voWJT9N0YQdhsE31f1jCREjuo1wMQMsdVrtrf4w7f-2AhJue425xldQ-33teFE0DK6wMI8", "scope": "playlist-modify-private playlist-read-private", "expires_at": 1492273043}
