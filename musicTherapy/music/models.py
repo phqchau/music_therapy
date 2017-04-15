@@ -20,3 +20,6 @@ class SeedsForPlaylist(models.Model):
 class ArtistSeeds(models.Model):
 	artist_name = models.CharField(max_length=100)
 	artist_id = models.CharField(max_length=100)
+
+	def __str__(self):
+		return self.artist_id

@@ -3,7 +3,7 @@ from django.http import HttpResponse , HttpResponseRedirect
 from django.urls import reverse
 
 import music.controller as controller
-from .models import Playlists, SeedsForPlaylist, ArtistSeeds
+from music.models import Playlists, SeedsForPlaylist, ArtistSeeds
 
 # Create your views here.
 genres = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime', 'black-metal', 'bluegrass', 'blues', 'bossanova', 'brazil', 'breakbeat', 'british', 'cantopop', 'chicago-house', 'children', 'chill', 'classical', 'club', 'comedy', 'country', 'dance', 'dancehall', 'death-metal', 'deep-house', 'detroit-techno', 'disco', 'disney', 'drum-and-bass', 'dub', 'dubstep', 'edm', 'electro', 'electronic', 'emo', 'folk', 'forro', 'french', 'funk', 'garage', 'german', 'gospel', 'goth', 'grindcore', 'groove', 'grunge', 'guitar', 'happy', 'hard-rock', 'hardcore', 'hardstyle', 'heavy-metal', 'hip-hop', 'holidays', 'honky-tonk', 'house', 'idm', 'indian', 'indie', 'indie-pop', 'industrial', 'iranian', 'j-dance', 'j-idol', 'j-pop', 'j-rock', 'jazz', 'k-pop', 'kids', 'latin', 'latino', 'malay', 'mandopop', 'metal', 'metal-misc', 'metalcore', 'minimal-techno', 'movies', 'mpb', 'new-age', 'new-release', 'opera', 'pagode', 'party', 'philippines-opm', 'piano', 'pop', 'pop-film', 'post-dubstep', 'power-pop', 'progressive-house', 'psych-rock', 'punk', 'punk-rock', 'r-n-b', 'rainy-day', 'reggae', 'reggaeton', 'road-trip', 'rock', 'rock-n-roll', 'rockabilly', 'romance', 'sad', 'salsa', 'samba', 'sertanejo', 'show-tunes', 'singer-songwriter', 'ska', 'sleep', 'songwriter', 'soul', 'soundtracks', 'spanish', 'study', 'summer', 'swedish', 'synth-pop', 'tango', 'techno', 'trance', 'trip-hop', 'turkish', 'work-out', 'world-music']
@@ -36,25 +36,27 @@ def chooseArtists(request):
 	sp = controller.authenticate_user("Chau&nbsp;Pham")
 	genresFetched = []
 	for i in range(1,6):
-		genre = request.POST["genres" + str(i)]
+		genre = request.POST['genres' + str(i)]
 		if genre != 'none':
 			genresFetched.append(genre)
-	user_id = sp.current_user()["id"]
-	age = request.POST["age"]
+	age = request.POST['age']
+	if age:
+		age = int(age)
 	year_range = controller.get_year_range(age)
-	artists = artists_from_year_range_and_genres(sp, year_range, genresFetched)
-	
-	return render(request, 'music/chooseArtists.html', artists)
+	artists = controller.artists_from_year_range_and_genres(sp, year_range, genresFetched)
+	artist_list = []
+	ArtistSeeds.objects.all().delete()
+	for artist_id, artist_name in artists.items():
+		artists_seeds = ArtistSeeds.objects.create(artist_name=artist_name, artist_id=artist_id)
+		artist_list.append(artist_name)
+	return render(request, 'music/chooseArtists.html', {'artist_list':artist_list})
 
 def processPlaylist(request):
 	try:
-		pname = request.POST["playlistName"]
-		age = request.POST["age"]
-		if age:
-			age = eval(age)
+		pname = request.POST['playlistName']
 		artistsFetched = []
 		for i in range(1,6):
-			artist = request.POST["artists" + str(i)]
+			artist = request.POST['artists' + str(i)]
 			if artist != 'none':
 				artistsFetched.append(artist)
 
@@ -66,8 +68,12 @@ def processPlaylist(request):
 
 		#new_playlist = controller.create_playlist(sp, pname, age, genresFetched)
 		user_id = "1262880145"
+		artist_ids = []
+		for artist in artistsFetched:
+			artist_id = ArtistSeeds.objects.filter(artist_name=artist).values()[0]['artist_id']
+			artist_ids.append(artist_id)
 
-		recommended_tracks = sp.recommendations(seed_artists=artist_ids, limit=30)["tracks"]
+		recommended_tracks = sp.recommendations(seed_artists=artist_ids, limit=30)['tracks']
 
 		track_uris = []
 		for track in recommended_tracks:

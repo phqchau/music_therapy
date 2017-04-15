@@ -6,45 +6,44 @@
 </head>
 
 <div class="center">
-	<h2>Please enter the details for playlist creation</h2>
+	<h2>Please choose up to five artists below</h2>
 
 	{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 	<form action="{% url 'music:processPlaylist' %}" method="post">
 		{% csrf_token %}
-		{% if artists %}
-		<p>Recommended Artists (choose up to five):</p>
+		<p>Recommended Artists:</p>
 		<select name="artists1">
 		<option value='none' selected>none</option>
-		{% for artist in artists %}
+		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
 		</select>
 		<select name="artists2">
 		<option value='none' selected>none</option>
-		{% for artist in artists %}
+		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
 		</select>
 		<select name="artists3">
 		<option value='none' selected>none</option>
-		{% for artist in artists %}
+		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
 		</select>
 		<select name="artists4">
 		<option value='none' selected>none</option>
-		{% for artist in artists %}
+		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
 		</select>
 		<select name="artists5">
 		<option value='none' selected>none</option>
-		{% for artist in artists %}
+		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
 		</select>
-		{% endif %}
+		<p>Playlist Name:</p><input type="text" name="playlistName">
 		<p><input type="submit" value="Create Playlist"></p>
 </form>
 </div>

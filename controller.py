@@ -4,9 +4,9 @@ import spotipy
 import spotipy.util as util
 
 
-SPOTIPY_CLIENT_ID = 'id'
-SPOTIPY_CLIENT_SECRET = 'secret'
-SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback/'
+SPOTIPY_CLIENT_ID = '52451274c0ed4367af773d2d957f5566'
+SPOTIPY_CLIENT_SECRET = 'ce14846193dc4a7384e0bd411b93debb'
+SPOTIPY_REDIRECT_URI = 'http://localhost:8000/callback/'
 CACHE = '.spotipyauthcache'
 
 def show_tracks(tracks):
@@ -98,6 +98,7 @@ def artists_from_year_range_and_genres(sp, range, genres):
 	
 	for artist in bad_artists:		
 		del artists[artist]
+	print(artists)
 		
 	return artists
 
