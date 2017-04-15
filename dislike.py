@@ -6,13 +6,12 @@ import spotipy.util as util
 SPOTIPY_CLIENT_ID = "fd766dc7eb804d15b63fc336469a006b"
 SPOTIPY_CLIENT_SECRET = "766b527e3783487d93541b0b356b9904"
 SPOTIPY_REDIRECT_URI = "http://localhost:8080/callback"
-SCOPE = 'playlist-read-private playlist-modify-private'
 CACHE = '.spotipyoauthcache'
 
 debug = False
 
 def authenticate_user(username):
-    scope = "playlist-read-private playlist-modify-private"
+    scope = "playlist-read-private playlist-modify-private playlist-modify-public"
     token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
     sp = spotipy.Spotify(auth=token)
     return sp
@@ -41,28 +40,38 @@ def dislike(sp, track_id, playlist_id, genre_id, username):
 
     if tempo >= 114:
         i = 0
-        limit = 114
-        results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = limit, target_energy = energy)["tracks"]
+        tempoLimit = 114
+        results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                                     target_danceability = danceability, target_energy = energy,
+                                     target_mode = mode, target_speechiness = speechiness,
+                                     target_acousticness = acousticness, target_instrumentalness = instrumentalness,
+                                     target_liveness = liveness, target_valence = valence)["tracks"]
         for track in results:
             if i == 5:
                 break
             else:
-                print(track["name"])
+                addTrack = {track["id"]}
+                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
             i += 1
     else:
         i = 0
-        limit = 114
-        results = sp.recommendations(seed_genres = genre_id, limit = 100, min_tempo = limit, target_energy = energy)["tracks"]
+        tempoLimit = 114
+        results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                                     target_danceability = danceability, target_energy = energy,
+                                     target_mode = mode, target_speechiness = speechiness,
+                                     target_acousticness = acousticness, target_instrumentalness = instrumentalness,
+                                     target_liveness = liveness, target_valence = valence)["tracks"]
         for track in results:
             if i ==5:
                 break
             else:
-                print(track["name"])
+                addTrack = {track["id"]}
+                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
             i += 1
-    try:
-        sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, track_id)
-    except:
-        print("The track was not removed from the playlist")
+
+    removeTrack = {track_id}
+    sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, removeTrack)
+        
 if __name__ == "__main__":
     username = "22nisbf24xx7ftl6zemmjnncy"
     sp = authenticate_user(username)
