@@ -33,53 +33,23 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
         user_id = sp.current_user()["id"]
 
         year_range = get_year_range(age)
-	
-        if artists:
-                artists = artists + artists_from_year_range_and_genres(sp, year_range, genres)
-        else:
-                artists = artists_from_year_range_and_genres(sp, year_range, genres)
+ 
+        artists = artists_from_year_range_and_genres(sp, year_range, genres) 
+        while len(artists) > 5: 
+                artists.popitem() 
+        artist_ids = artists.keys() 
+   
+        recommended_tracks = sp.recommendations(seed_genres=genres, seed_artists=artist_ids, limit=30)["tracks"] 
 
-        recommended_tracks = []
-
-        j = 0
-        if len(artists) > 0:
-                while(j + 5 < len(artists)):
-                        recommended_tracks += sp.recommendations(seed_artists=artists[j:j+5], limit=10)["tracks"]
-                        j += 5
-                if j < len(artists):
-                        recommended_tracks += sp.recommendations(seed_artists=artists[j:], limit=10)["tracks"]
-        
-        recommended_tracks += sp.recommendations(seed_genres = genres, seed_tracks = tracks, limit=(90 - len(recommended_tracks)))["tracks"]
-        
-        nameOne = name
-        nameTwo = name
-        nameThree = name
-
-        track_uris = []
-        for track in recommended_tracks[:29]:
-                track_uris.append(track["uri"])
-        nameOne += "1"
-        playlistOne = sp.user_playlist_create(user_id, nameOne, public=False)
-        playlist_id_one = playlistOne["id"]
-        sp.user_playlist_add_tracks(user_id, playlist_id_one, track_uris)
-
-        track_uris = []
-        for track in recommended_tracks[30:59]:
-                track_uris.append(track["uri"])
-        nameTwo += "2"
-        playlist = sp.user_playlist_create(user_id, nameTwo, public=False)
-        playlist_id_two = playlist["id"]
-        sp.user_playlist_add_tracks(user_id, playlist_id_two, track_uris)
-
-        track_uris = []
-        for track in recommended_tracks[60:]:
-                track_uris.append(track["uri"])
-        nameThree += "3"
-        playlist = sp.user_playlist_create(user_id, name, public=False)
-        playlist_id_three = playlist["id"]
-        sp.user_playlist_add_tracks(user_id, playlist_id_three, track_uris)
-                
-        return (playlist_id_one, playlist_id_two, playlist_id_three) 
+        track_uris = [] 
+        for track in recommended_tracks: 
+                track_uris.append(track["uri"]) 
+   
+        playlist = sp.user_playlist_create(user_id, name, public=False) 
+        playlist_id = playlist["id"] 
+        sp.user_playlist_add_tracks(user_id, playlist_id, track_uris) 
+   
+        return playlist_id
 	
 def display_playlist_tracks(sp, playlist_id):
 	userID = sp.current_user()["id"]
@@ -129,28 +99,6 @@ def artists_from_year_range_and_genres(sp, range, genres):
 	
 	for artist in bad_artists:		
 		del artists[artist]
-		
-                if debug:
-                        print(album['name'])
-                for artist in album['artists']:
-                        if artist['id'] not in artists:
-                                if debug:
-                                        print(artist['name'])
-                                artists.append(artist['id'])
-	if debug:
-                print(artists)
-	
-	bad_artists = []
-			
-	for id in artists:
-                current_artist = sp.artist(id)
-                if debug:
-                        print(current_artist['genres'])
-                if set(genres).isdisjoint(set(current_artist['genres'])):
-                        bad_artists.append(current_artist['id'])
-	
-	for artist in bad_artists:		
-                artists.remove(artist)
 			
 	return artists
 
@@ -175,8 +123,7 @@ def upvote(sp, playlist_id, track):
 
 def downvote(sp, track_id, playlist_id, genre_id, username):
 
-        if debug:
-                sp.display_playlist_tracks(sp, playlist_id)
+        sp.display_playlist_tracks(sp, playlist_id)
 
         for i in sp.audio_features(track_id):
                 danceability = i["danceability"]
@@ -232,8 +179,7 @@ def downvote(sp, track_id, playlist_id, genre_id, username):
         removeTrack = {track_id}
         sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, removeTrack)
 
-        if debug:
-                display_playlist_tracks(sp, playlist_id)
+        display_playlist_tracks(sp, playlist_id)
 	
 if __name__ == '__main__':
 	sp = authenticate_user("fcurrin")
