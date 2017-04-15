@@ -3,17 +3,9 @@ import datetime
 import spotipy
 import spotipy.util as util
 
-
-<<<<<<< Updated upstream
-SPOTIPY_CLIENT_ID = 'id'
-SPOTIPY_CLIENT_SECRET = 'secret'
-SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback/'
-CACHE = '.spotipyauthcache'
-=======
 SPOTIPY_CLIENT_ID = 'fd766dc7eb804d15b63fc336469a006b'
 SPOTIPY_CLIENT_SECRET = '766b527e3783487d93541b0b356b9904'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback'
-SCOPE = 'playlist-read-private playlist-modify-private'
 CACHE = '.spotipyoauthcache'
 
 debug = False
@@ -26,18 +18,10 @@ def show_tracks(tracks):
                         track['name']))
 			
 def authenticate_user(username):
-<<<<<<< Updated upstream
-	scope = "playlist-read-private playlist-modify-private"
+	scope = "playlist-read-private playlist-modify-private playlist-modify-public"
 	token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
 	sp = spotipy.Spotify(auth=token)
 	return sp
-
-=======
-        scope = "playlist-read-private playlist-modify-private"
-        token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
-        sp = spotipy.Spotify(auth=token)
-        return sp
->>>>>>> Stashed changes
 	
 def display_playlists(sp):
         playlists = sp.current_user_playlists()
@@ -45,29 +29,6 @@ def display_playlists(sp):
         for playlist in playlists["items"]:
                 print(playlist["name"])
 		
-<<<<<<< Updated upstream
-def create_playlist(sp, name, age, genres):
-	user_id = sp.current_user()["id"]
-
-	year_range = get_year_range(age)
-
-	artists = artists_from_year_range_and_genres(sp, year_range, genres)
-	while len(artists) > 5:
-		artists.popitem()
-	artist_ids = artists.keys()
-	
-	recommended_tracks = sp.recommendations(seed_artists=artist_ids, limit=30)["tracks"]
-
-	track_uris = []
-	for track in recommended_tracks:
-		track_uris.append(track["uri"])
-	
-	playlist = sp.user_playlist_create(user_id, name, public=False)
-	playlist_id = playlist["id"]
-	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
-	
-	return playlist_id
-=======
 def create_playlist(sp, name, age, genres, artists=None, tracks=None):
         user_id = sp.current_user()["id"]
 
@@ -119,7 +80,6 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
         sp.user_playlist_add_tracks(user_id, playlist_id_three, track_uris)
                 
         return (playlist_id_one, playlist_id_two, playlist_id_three) 
->>>>>>> Stashed changes
 	
 def display_playlist_tracks(sp, playlist_id):
 	userID = sp.current_user()["id"]
@@ -152,16 +112,10 @@ def albums_from_year_range(sp, range):
 def artists_from_year_range_and_genres(sp, range, genres):
 	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=50)
 
-<<<<<<< Updated upstream
-=======
-	if debug:
-                print(results)
->>>>>>> Stashed changes
 	albums = results['albums']['items']
 
 	artists = {}
 	for album in albums:
-<<<<<<< Updated upstream
 		for artist in album['artists']:
 			if artist['id'] not in artists.keys():
 				artists[artist['id']] = artist['name']
@@ -176,7 +130,6 @@ def artists_from_year_range_and_genres(sp, range, genres):
 	for artist in bad_artists:		
 		del artists[artist]
 		
-=======
                 if debug:
                         print(album['name'])
                 for artist in album['artists']:
@@ -199,7 +152,6 @@ def artists_from_year_range_and_genres(sp, range, genres):
 	for artist in bad_artists:		
                 artists.remove(artist)
 			
->>>>>>> Stashed changes
 	return artists
 
 			
@@ -220,6 +172,68 @@ def upvote(sp, playlist_id, track):
 	for track in recommended_tracks:
 		track_uris.append(track["uri"])
 	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+
+def downvote(sp, track_id, playlist_id, genre_id, username):
+
+        if debug:
+                sp.display_playlist_tracks(sp, playlist_id)
+
+        for i in sp.audio_features(track_id):
+                danceability = i["danceability"]
+                energy = i["energy"]
+                mode = i["mode"]
+                speechiness = i["speechiness"]
+                acousticness = i["acousticness"]
+                instrumentalness = i["instrumentalness"]
+                liveness = i["liveness"]
+                valence = i["valence"]
+                tempo = i["tempo"]
+
+                danceability = 1 - danceability
+                energy = 1 - energy
+                mode = 1 - mode
+                speechiness = 1 - speechiness
+                acousticness = 1 - acousticness
+                instrumentalness = 1 - instrumentalness
+                liveness = 1 - liveness
+                valence = 1 - valence
+
+        if tempo >= 114:
+                i = 0
+                tempoLimit = 114
+                results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                                             target_danceability = danceability, target_energy = energy,
+                                             target_mode = mode, target_speechiness = speechiness,
+                                             target_acousticness = acousticness, target_instrumentalness = instrumentalness,
+                                             target_liveness = liveness, target_valence = valence)["tracks"]
+                for track in results:
+                        if i == 5:
+                                break
+                        else:
+                                addTrack = {track["id"]}
+                                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
+                        i += 1
+        else:
+                i = 0
+                tempoLimit = 114
+                results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                                             target_danceability = danceability, target_energy = energy,
+                                             target_mode = mode, target_speechiness = speechiness,
+                                             target_acousticness = acousticness, target_instrumentalness = instrumentalness,
+                                             target_liveness = liveness, target_valence = valence)["tracks"]
+                for track in results:
+                        if i ==5:
+                                break
+                        else:
+                                addTrack = {track["id"]}
+                                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
+                        i += 1
+
+        removeTrack = {track_id}
+        sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, removeTrack)
+
+        if debug:
+                display_playlist_tracks(sp, playlist_id)
 	
 if __name__ == '__main__':
 	sp = authenticate_user("fcurrin")
