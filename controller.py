@@ -83,26 +83,31 @@ def albums_from_year_range(sp, range):
                 for artist in album['artists']:
                         print(artist['name'])
 	
-def artists_from_year_range_and_genres(sp, range, genres):
-	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=50)
+def artists_from_year_range_and_genres(sp, genres, age):
+        artists = {}
+        upperLimit = 25
+        while len(artists) < 5:
+                year_range = get_year_range(age, upperLimit)
+                results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]), type='album',limit=50)
 
-	albums = results['albums']['items']
+                albums = results['albums']['items']
 
-	artists = {}
-	for album in albums:
-		for artist in album['artists']:
-			if artist['id'] not in artists.keys():
-				artists[artist['id']] = artist['name']
+                for album in albums:
+                        for artist in album['artists']:
+                                if artist['id'] not in artists.keys():
+                                        artists[artist['id']] = artist['name']
 	
-	bad_artists = []
+                bad_artists = []
 			
-	for id in artists.keys():
-		current_artist = sp.artist(id)
-		if set(genres).isdisjoint(set(current_artist['genres'])):
-			bad_artists.append(current_artist['id'])
+                for id in artists.keys():
+                        current_artist = sp.artist(id)
+                        if set(genres).isdisjoint(set(current_artist['genres'])):
+                                bad_artists.append(current_artist['id'])
 	
-	for artist in bad_artists:		
-		del artists[artist]
+                for artist in bad_artists:		
+                        del artists[artist]
+
+                year_range[1] += 10
 			
 	return artists
 
