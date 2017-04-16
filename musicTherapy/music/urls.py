@@ -13,11 +13,18 @@ urlpatterns = [
 	# ex: /music/processPlaylist/
 	url(r'^processPlaylist/$', views.processPlaylist, name='processPlaylist'),	
 
+	# ex: /music/authUser/
+	url(r'^authUser/$', views.authUser, name='authUser'),	
+
+	# ex: /music/getUserInfo/
+	url(r'^getUserInfo/$', views.getUserInfo, name='getUserInfo'),	
+
 	# ex: /music/viewPlaylist/
 	url(r'^viewPlaylist/$', views.viewPlaylist, name='viewPlaylist'),
 
+	# ex: /music/chooseArtists/
 	url(r'^chooseArtists/$', views.chooseArtists, name='chooseArtists'),	
 
-	# ex: /music/createPlaylist/
+	# ex: /music/play/
 	url(r'^play/$', views.play, name='play'),	
 ]
