@@ -34,9 +34,9 @@ def create_playlist(sp, name, age, genres, artists=None, tracks=None):
 
         upperLimit = 25
 
-        while artists=None:
+        while len(artists) < 5:
                 year_range = get_year_range(age, upperLimit)
-                artists = artists_from_year_range_and_genres(sp, year_range, genres)
+                artists += artists_from_year_range_and_genres(sp, year_range, genres)
                 upperLimit += 10
 
         while len(artists) > 5: 
