@@ -46,22 +46,6 @@
 	</select>
 	{% endif %}
 
-	{% if artists %}
-	Artists: <select name="artists" multiple>
-		{% for artist in artists %}
-		<option value="{{artist}}"></option>
-		{% endfor %}
-	</select>
-	{% endif %}
-
-	{% if tracks %}
-	Tracks: <select name="tracks" multiple>
-		{% for track in tracks %}
-		<option value="{{track}}"></option>
-		{% endfor %}
-	</select>
-	{% endif %}
-<!-- Name, Age, Genre, Artists, Tracks-->
 	<p><input type="submit" value="Get Recommended Artists"></p>
 </form>
 </div>

@@ -38,7 +38,7 @@ def create_playlist(sp, name, age, genres):
 		artists.popitem()
 	artist_ids = artists.keys()
 	
-	recommended_tracks = sp.recommendations(seed_artists=artist_ids, limit=30)["tracks"]
+	recommended_tracks = sp.recommendations(seed_genres=genres, seed_artists=artist_ids, limit=30)["tracks"]
 
 	track_uris = []
 	for track in recommended_tracks:
