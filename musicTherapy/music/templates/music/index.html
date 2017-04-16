@@ -5,6 +5,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
 </head>
 
+{% if error_message %}
+<body onload="alertUp('{{error_message}}')"></body>
+{% endif %}
+
 <div class="center">
 <h1 align="center">Music From Your Past</h1>
 <h2 align="center">music as memory therapy</h2>
@@ -23,6 +27,10 @@
             '&scope=playlist-read-private%20playlist-modify%20playlist-modify-private' +
             '&redirect_uri=' + encodeURIComponent(redirect_uri);
         var w = window.open(url,"_self");
+    }
+
+    function alertUp(error_message) {
+        alert(error_message);
     }
 </script>
 </html>

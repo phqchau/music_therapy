@@ -40,6 +40,11 @@ def play(request):
 def authUser(request):
 	if request.method == 'GET':
 		auth_code = request.GET.get('code')
+		if not auth_code:
+			redirect_uri = 'http://localhost:8080/music/authUser/'
+			context = {'redirect_uri': redirect_uri, 'error_message':'User Authentication failed. Please login again!'}
+			return render(request, 'music/index.html', context)
+
 		spotify_url = 'https://accounts.spotify.com/api/token'
 		authorization_string = SPOTIPY_CLIENT_ID + ':' + SPOTIPY_CLIENT_SECRET
 		redirect_uri = 'http://localhost:8080/music/authUser/'
