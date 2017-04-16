@@ -4,8 +4,14 @@ from django.urls import reverse
 
 import music.controller as controller
 from music.models import Playlists, SeedsForPlaylist
+import base64
+import requests
+import json
+import ast
 
 # Create your views here.
+SPOTIPY_CLIENT_ID = '63dcea5ff7b040db9bd57e6f446fdc2a'
+SPOTIPY_CLIENT_SECRET = 'e70126784b314724805ceb93bc813b33'
 genres = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime', 'black-metal', 'bluegrass', 'blues', 'bossanova', 'brazil', 'breakbeat', 'british', 'cantopop', 'chicago-house', 'children', 'chill', 'classical', 'club', 'comedy', 'country', 'dance', 'dancehall', 'death-metal', 'deep-house', 'detroit-techno', 'disco', 'disney', 'drum-and-bass', 'dub', 'dubstep', 'edm', 'electro', 'electronic', 'emo', 'folk', 'forro', 'french', 'funk', 'garage', 'german', 'gospel', 'goth', 'grindcore', 'groove', 'grunge', 'guitar', 'happy', 'hard-rock', 'hardcore', 'hardstyle', 'heavy-metal', 'hip-hop', 'holidays', 'honky-tonk', 'house', 'idm', 'indian', 'indie', 'indie-pop', 'industrial', 'iranian', 'j-dance', 'j-idol', 'j-pop', 'j-rock', 'jazz', 'k-pop', 'kids', 'latin', 'latino', 'malay', 'mandopop', 'metal', 'metal-misc', 'metalcore', 'minimal-techno', 'movies', 'mpb', 'new-age', 'new-release', 'opera', 'pagode', 'party', 'philippines-opm', 'piano', 'pop', 'pop-film', 'post-dubstep', 'power-pop', 'progressive-house', 'psych-rock', 'punk', 'punk-rock', 'r-n-b', 'rainy-day', 'reggae', 'reggaeton', 'road-trip', 'rock', 'rock-n-roll', 'rockabilly', 'romance', 'sad', 'salsa', 'samba', 'sertanejo', 'show-tunes', 'singer-songwriter', 'ska', 'sleep', 'songwriter', 'soul', 'soundtracks', 'spanish', 'study', 'summer', 'swedish', 'synth-pop', 'tango', 'techno', 'trance', 'trip-hop', 'turkish', 'work-out', 'world-music']
 artists = []
 tracks = []
@@ -15,7 +21,9 @@ def callback(request):
 
 def index(request):
 	#latest_question_list = Question.objects.order_by('-pub_date')[:5]
-	return render(request, 'music/index.html', {})
+	redirect_uri = 'http://localhost:8080/music/authUser/'
+	context = {'redirect_uri': redirect_uri,}
+	return render(request, 'music/index.html', context)
 
 '''def detail(request, question_id):
 	question = get_object_or_404(Question, pk=question_id)
@@ -29,11 +37,59 @@ def play(request):
 	playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 
+def authUser(request):
+	if request.method == 'GET':
+		auth_code = request.GET.get('code')
+		if not auth_code:
+			redirect_uri = 'http://localhost:8080/music/authUser/'
+			context = {'redirect_uri': redirect_uri, 'error_message':'User Authentication failed. Please login again!'}
+			return render(request, 'music/index.html', context)
+
+		spotify_url = 'https://accounts.spotify.com/api/token'
+		authorization_string = SPOTIPY_CLIENT_ID + ':' + SPOTIPY_CLIENT_SECRET
+		redirect_uri = 'http://localhost:8080/music/authUser/'
+
+		headers = {
+			'Authorization' : 'Basic ' + base64.b64encode(bytes(authorization_string, "utf-8")).decode("ascii")
+		} 
+		post_data = {
+			'code': auth_code,
+			'redirect_uri': redirect_uri,
+			'grant_type': 'authorization_code',
+		}
+
+	response = requests.post(spotify_url, data=post_data, headers=headers)
+	content = response.content.decode("utf-8")
+	access_token = ast.literal_eval(content)['access_token']
+
+	request.session['access_token'] = access_token
+
+	return HttpResponseRedirect(reverse('music:getUserInfo'))
+
+def getUserInfo(request):
+	if request.session.has_key('access_token'):
+		access_token = request.session['access_token']	
+
+	new_header = {
+		'Authorization' : 'Bearer ' + access_token
+	}
+
+	get_data_url = "https://api.spotify.com/v1/me"
+	response_new = requests.get(get_data_url, headers=new_header)
+	content_new = response_new.content.decode("utf-8")
+	user_id = json.loads(content_new)['id']
+
+	request.session['user_id'] = user_id
+
+	return HttpResponseRedirect(reverse('music:createPlaylist'))
+
 def createPlaylist(request):
 	return render(request, 'music/createPlaylist.html', {'genres': genres, 'artists':artists, 'tracks':tracks})
 
 def chooseArtists(request):
-	sp = controller.authenticate_user("Chau&nbsp;Pham")
+	if request.session.has_key('access_token'):
+		access_token = request.session['access_token']
+	sp = controller.authenticate_user(access_token)
 	genresFetched = []
 	for i in range(1,6):
 		genre = request.POST['genres' + str(i)]
@@ -68,7 +124,11 @@ def processPlaylist(request):
 		# Redisplay the question voting form.
 		return render(request, 'music/createPlaylist.html', {'genres': genres, 'artists':artists, 'tracks':tracks,'error_message': "You didn't select a choice."})		
 	else:
-		sp = controller.authenticate_user("Chau&nbsp;Pham")
+		if request.session.has_key('user_id'):
+			user_id = request.session['user_id']
+		if request.session.has_key('access_token'):
+			access_token = request.session['access_token']
+		sp = controller.authenticate_user(access_token)
 
 		#new_playlist = controller.create_playlist(sp, pname, age, genresFetched)
 		if request.session.has_key('genres'):
@@ -76,7 +136,7 @@ def processPlaylist(request):
 		if request.session.has_key('age'):
 			age = request.session['age']
 
-		user_id = "1262880145"
+		#user_id = "1262880145"
 		artist_ids = []
 		for artist in artistsFetched:
 			if request.session.has_key('artist'):
@@ -104,9 +164,9 @@ def processPlaylist(request):
 		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 
 		#clear the session keeping the seeds info
-		del request.session['genres']
-		del request.session['age']
-		del request.session['artist']
+		if request.session.has_key('genres'): del request.session['genres']
+		if request.session.has_key('age'): del request.session['age']
+		if request.session.has_key('artist'): del request.session['artist']
 		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 		#return HttpResponse("Playlist has been created!\nYou're looking at {0}".format(new_playlist))
 		#return render(request, 'polls/play.html', {'playlist':new_playlist,})
@@ -115,23 +175,3 @@ def processPlaylist(request):
 
 def viewPlaylist(request):
 	return HttpResponse("You're looking at Something new?")
-
-'''def results(request, question_id):
-	question = get_object_or_404(Question, pk=question_id)
-	return render(request, 'music/results.html', {'question': question})
-
-def vote(request, question_id):
-	question = get_object_or_404(Question, pk=question_id)
-	try:
-		selected_choice = question.choice_set.get(pk=request.POST['choice'])
-	except(KeyError, Choice.DoesNotExist):
-		# Redisplay the question voting form.
-		return render(request, 'music/detail.html', {'question': question, 'error_message': "You didn't select a choice.",})
-	else:
-		selected_choice.votes += 1
-		selected_choice.save()
-
-		# Always return an HttpResponseRedirect after successfully dealing with POST data.
-		# This prevents data from being posted twice if a user hits the Back button
-
-		return HttpResponseRedirect(reverse('music:results', args=(question.id,)))'''

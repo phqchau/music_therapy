@@ -4,9 +4,8 @@ import spotipy
 import spotipy.util as util
 
 
-SPOTIPY_CLIENT_ID = '52451274c0ed4367af773d2d957f5566'
-SPOTIPY_CLIENT_SECRET = 'ce14846193dc4a7384e0bd411b93debb'
-SPOTIPY_REDIRECT_URI = 'http://localhost:8000/callback/'
+SPOTIPY_CLIENT_ID = '63dcea5ff7b040db9bd57e6f446fdc2a'
+SPOTIPY_CLIENT_SECRET = 'e70126784b314724805ceb93bc813b33'
 CACHE = '.spotipyauthcache'
 
 def show_tracks(tracks):
@@ -15,9 +14,9 @@ def show_tracks(tracks):
 		print ("   %d %32.32s %s" % (i, track['artists'][0]['name'],
 			track['name']))
 			
-def authenticate_user(username):
+def authenticate_user(token):
 	scope = "playlist-read-private playlist-modify-private"
-	token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
+	#token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
 	sp = spotipy.Spotify(auth=token)
 	return sp
 

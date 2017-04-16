@@ -5,28 +5,32 @@
 <link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
 </head>
 
+{% if error_message %}
+<body onload="alertUp('{{error_message}}')"></body>
+{% endif %}
+
 <div class="center">
 <h1 align="center">Music From Your Past</h1>
 <h2 align="center">music as memory therapy</h2>
-<a href="javascript:loginSpotify();" class="button">Log In With Your Spotify Account</a>
+<a href="javascript:loginSpotify('{{redirect_uri}}');" class="button">Log In With Your Spotify Account</a>
 </div>
 
 <script type="text/javascript">
-	var loginSpotify = function(){
-        var SPOTIPY_CLIENT_ID = "52451274c0ed4367af773d2d957f5566"
-        var SPOTIPY_REDIRECT_URI = "http://localhost:8000/music/createPlaylist/"
-        var spotifyScope = "playlist-read-private"
-        var spotifyAuthEndpoint = "https://accounts.spotify.com/authorize?"+"client_id="+SPOTIPY_CLIENT_ID+"&redirect_uri="+SPOTIPY_REDIRECT_URI+"&scope="+spotifyScope+"&response_type=token&state=123";
-        window.open(spotifyAuthEndpoint,"_self");
-        //This event listener will trigger once your callback page adds the token to localStorage
-        window.addEventListener("storage",function(event){
-            if (event.key == "accessToken"){
-                var spAccessToken = event.newValue;
-                console.log(spAccessToken);
-                window.open('http://localhost:8000/music/createPlaylist/',"_self");
-                //do things with spotify API using your access token here!!
-            }
-        });
+    function loginSpotify(redirect_uri){
+        var client_id = '63dcea5ff7b040db9bd57e6f446fdc2a';
+        {% if not redirect_uri %}
+            var redirect_uri = 'http://localhost:8080/music/authUser/';
+        {% endif %}
+        // var redirect_uri = 'http://localhost:8080/polls/createPlaylist/';
+        var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
+            '&response_type=code' +
+            '&scope=playlist-read-private%20playlist-modify%20playlist-modify-private' +
+            '&redirect_uri=' + encodeURIComponent(redirect_uri);
+        var w = window.open(url,"_self");
+    }
+
+    function alertUp(error_message) {
+        alert(error_message);
     }
 </script>
 </html>
