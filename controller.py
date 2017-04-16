@@ -8,15 +8,8 @@ SPOTIPY_CLIENT_SECRET = '766b527e3783487d93541b0b356b9904'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback'
 CACHE = '.spotipyoauthcache'
 
-<<<<<<< HEAD
-SPOTIPY_CLIENT_ID = '52451274c0ed4367af773d2d957f5566'
-SPOTIPY_CLIENT_SECRET = 'ce14846193dc4a7384e0bd411b93debb'
-SPOTIPY_REDIRECT_URI = 'http://localhost:8000/callback/'
-CACHE = '.spotipyauthcache'
-=======
 debug = False
 >>>>>>> Stashed changes
->>>>>>> cea4d9cd6c5415b6961be3fcbc947884d72dbfdb
 
 def show_tracks(tracks):
         for i, item in enumerate(tracks['items']):
@@ -39,9 +32,13 @@ def display_playlists(sp):
 def create_playlist(sp, name, age, genres, artists=None, tracks=None):
         user_id = sp.current_user()["id"]
 
-        year_range = get_year_range(age)
- 
-        artists = artists_from_year_range_and_genres(sp, year_range, genres) 
+        upperLimit = 25
+
+        while artists=None:
+                year_range = get_year_range(age, upperLimit)
+                artists = artists_from_year_range_and_genres(sp, year_range, genres)
+                upperLimit += 10
+
         while len(artists) > 5: 
                 artists.popitem() 
         artist_ids = artists.keys() 
@@ -68,10 +65,10 @@ def display_playlist_tracks(sp, playlist_id):
 		show_tracks(tracks)
 
 # returns min: the year the user was 15, and max: the year the user was 25		
-def get_year_range(age):
+def get_year_range(age, upperLimit):
 	current_year = datetime.datetime.today().year
 	min = current_year - age + 15
-	max = current_year - age + 25
+	max = current_year - age + upperLimit
 	return min, max
 	
 def albums_from_year_range(sp, range):
@@ -106,12 +103,7 @@ def artists_from_year_range_and_genres(sp, range, genres):
 	
 	for artist in bad_artists:		
 		del artists[artist]
-<<<<<<< HEAD
-	print(artists)
-		
-=======
 			
->>>>>>> cea4d9cd6c5415b6961be3fcbc947884d72dbfdb
 	return artists
 
 			
