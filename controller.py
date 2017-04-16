@@ -116,16 +116,17 @@ for each artist:
 use genre, random 4 artists from new list for recommendation seeds
 '''		
 
-def upvote(sp, playlist_id, track):
+def upvote(sp, playlist_id, track_id):
 	user_id = sp.current_user()["id"]
 	
-	recommended_tracks = sp.recommendations(seed_tracks=[track], limit=5)["tracks"]	
+	recommended_tracks = sp.recommendations(seed_tracks=[track_id], limit=5)["tracks"]	
 	track_uris = []
 	for track in recommended_tracks:
 		track_uris.append(track["uri"])
 	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
 
-def downvote(sp, track_id, playlist_id, genre_id, username):
+def downvote(sp, track_id, playlist_id, genres):
+        user_id = sp.current_user()["id"]
 
         sp.display_playlist_tracks(sp, playlist_id)
 
@@ -152,7 +153,7 @@ def downvote(sp, track_id, playlist_id, genre_id, username):
         if tempo >= 114:
                 i = 0
                 tempoLimit = 114
-                results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                results = sp.recommendations(seed_genres = genres, limit = 100, max_tempo = tempoLimit,
                                              target_danceability = danceability, target_energy = energy,
                                              target_mode = mode, target_speechiness = speechiness,
                                              target_acousticness = acousticness, target_instrumentalness = instrumentalness,
@@ -162,12 +163,12 @@ def downvote(sp, track_id, playlist_id, genre_id, username):
                                 break
                         else:
                                 addTrack = {track["id"]}
-                                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
+                                sp.user_playlist_add_tracks(user_id, playlist_id, addTrack)
                         i += 1
         else:
                 i = 0
                 tempoLimit = 114
-                results = sp.recommendations(seed_genres = genre_id, limit = 100, max_tempo = tempoLimit,
+                results = sp.recommendations(seed_genres = genres, limit = 100, max_tempo = tempoLimit,
                                              target_danceability = danceability, target_energy = energy,
                                              target_mode = mode, target_speechiness = speechiness,
                                              target_acousticness = acousticness, target_instrumentalness = instrumentalness,
@@ -177,11 +178,11 @@ def downvote(sp, track_id, playlist_id, genre_id, username):
                                 break
                         else:
                                 addTrack = {track["id"]}
-                                sp.user_playlist_add_tracks(username, playlist_id, addTrack)
+                                sp.user_playlist_add_tracks(user_id, playlist_id, addTrack)
                         i += 1
 
         removeTrack = {track_id}
-        sp.user_playlist_remove_all_occurrences_of_tracks(username, playlist_id, removeTrack)
+        sp.user_playlist_remove_all_occurrences_of_tracks(user_id, playlist_id, removeTrack)
 
         display_playlist_tracks(sp, playlist_id)
 	
