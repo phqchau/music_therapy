@@ -5,10 +5,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
 </head>
 
+<a href="{% url 'music:createPlaylist' %}" class="button">Create Playlist</a>
+
 <div class="center">
 <h2>View all your playlists</h2>
-
-<a href="{% url 'music:createPlaylist' %}" class="button">Create Playlist</a>
 
 {% if list_of_playlist_tuples %}
     <ul>

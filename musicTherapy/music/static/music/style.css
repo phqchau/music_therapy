@@ -47,7 +47,6 @@ h2 {
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
     border-radius: 25px;
     position:relative;
@@ -68,12 +67,10 @@ input[type=submit] {
     background-color: #4CAF50;
     color: white;
     border: none;
-    width: 200px;
-    height: 50px;
     font-size: 16px;
     border-radius: 25px;
     cursor:pointer;
     text-align: center;
     left: 31%;
-    padding: 15px 32px;
+    text-align: center;
 }
