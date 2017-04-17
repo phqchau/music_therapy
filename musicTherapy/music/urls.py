@@ -7,6 +7,8 @@ urlpatterns = [
 	# ex: /music/
 	url(r'^$', views.index, name='index'),
 
+	url(r'^about/$', views.about, name='about'),	
+
 	# ex: /music/createPlaylist/
 	url(r'^createPlaylist/$', views.createPlaylist, name='createPlaylist'),	
 

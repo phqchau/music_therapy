@@ -22,7 +22,8 @@ def index(request):
 	return render(request, 'music/index.html', context)
 
 def about(request):
-	return render(request, 'music/about.html', {})
+	context = {}
+	return render(request, 'music/about.html', context)
 
 def play(request, playlist_id):
 	if request.session.has_key('user_id'):
