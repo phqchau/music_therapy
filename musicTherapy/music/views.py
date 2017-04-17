@@ -22,13 +22,13 @@ def index(request):
 	context = {'redirect_uri': redirect_uri,}
 	return render(request, 'music/index.html', context)
 
-'''def play(request, playlist_id):
+def play(request, playlist_id):
 	if request.session.has_key('user_id'):
 		user_id = request.session['user_id']
 	if not playlist_id:
 		playlist_id = "1AE5848cn7V6qHwriTAOZR"
 	playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
-	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})'''
+	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 
 def authUser(request):
 	if request.method == 'GET':
@@ -80,26 +80,29 @@ def createPlaylist(request):
 	return render(request, 'music/createPlaylist.html', {'genres': genres, 'artists':artists, 'tracks':tracks})
 
 def chooseArtists(request):
-	if request.session.has_key('access_token'):
-		access_token = request.session['access_token']
-	sp = controller.authenticate_user(access_token)
-	genresFetched = []
-	for i in range(1,6):
-		genre = request.POST['genres' + str(i)]
-		if genre != 'none':
-			genresFetched.append(genre)
-	request.session['genres'] = genresFetched
+	try:
+		if request.session.has_key('access_token'):
+			access_token = request.session['access_token']
+		sp = controller.authenticate_user(access_token)
+		genresFetched = []
+		for i in range(1,6):
+			genre = request.POST['genres' + str(i)]
+			if genre != 'none':
+				genresFetched.append(genre)
+		request.session['genres'] = genresFetched
 
-	age = request.POST['age']
-	if age:
-		age = int(age)
-	request.session['age'] = age
-	artists = controller.artists_from_year_range_and_genres(sp, genres, age)
-	artist_list = []
+		age = request.POST['age']
+		if age:
+			age = int(age)
+		request.session['age'] = age
+		artists = controller.artists_from_year_range_and_genres(sp, genres, age)
+		artist_list = []
 
-	for artist_id, artist_name in artists.items():
-		request.session['artist'] = (artist_id, artist_name)
-		artist_list.append(artist_name)
+		for artist_id, artist_name in artists.items():
+			request.session['artist'] = (artist_id, artist_name)
+			artist_list.append(artist_name)
+	except:
+		return render(request, 'music/createPlaylist.html', {'genres': genres, 'error_message': "You didn't provide enough information. All fields are required."})
 	return render(request, 'music/chooseArtists.html', {'artist_list':artist_list})
 
 def processPlaylist(request):
