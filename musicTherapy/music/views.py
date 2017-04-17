@@ -117,13 +117,6 @@ def processPlaylist(request):
 			if artist != 'none':
 				artistsFetched.append(artist)
 
-	except:
-		artist_list = []
-		if request.session.has_key('artist'):
-			artist_id, artist_name = request.session['artist']
-			artist_list.append(artist_name)
-		return render(request, 'music/chooseArtists.html', {'artist_list':artist_list,'error_message': "You didn't provide a playlist name."})		
-	else:
 		if request.session.has_key('user_id'):
 			user_id = request.session['user_id']
 		if request.session.has_key('access_token'):
@@ -156,6 +149,13 @@ def processPlaylist(request):
 		if request.session.has_key('age'): del request.session['age']
 		if request.session.has_key('artist'): del request.session['artist']
 		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
+
+	except:
+		artist_list = []
+		if request.session.has_key('artist'):
+			artist_id, artist_name = request.session['artist']
+			artist_list.append(artist_name)
+		return render(request, 'music/chooseArtists.html', {'artist_list':artist_list,'error_message': "You didn't provide a playlist name."})		
 
 def viewPlaylist(request):
 	if request.session.has_key('user_id'):
