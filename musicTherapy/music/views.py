@@ -148,10 +148,10 @@ def processPlaylist(request):
 
 		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 
-	except:
+	'''except:
 		if request.session.has_key('artist'):
 			sorted_artist_list = request.session['artist']
-		return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list,'error_message': "You didn't provide a playlist name or pick any artist."})		
+		return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list,'error_message': "You didn't provide a playlist name or pick any artist."})'''		
 
 def viewPlaylist(request):
 	if request.session.has_key('user_id'):
