@@ -53,7 +53,7 @@ h2 {
     position:relative;
     left: 31%;
     margin-top: 15px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .center {
@@ -69,10 +69,13 @@ input[type=submit] {
     color: white;
     border: none;
     display: inline-block;
+    padding: 15px 32px;
+    text-decoration: none;
     font-size: 16px;
     border-radius: 25px;
+    position:relative;
     cursor:pointer;
     text-align: center;
     left: 31%;
-    text-align: center;
+    cursor: pointer;
 }
