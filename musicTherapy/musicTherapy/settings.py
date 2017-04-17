@@ -25,7 +25,7 @@ SECRET_KEY = 'q7vr$$zgx3*12pw0twq6w7#$gn@!g53l+*5kmcb7ll&=-8%-co'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['musictherapy.pythonanywhere.com']
 
 
 # Application definition
