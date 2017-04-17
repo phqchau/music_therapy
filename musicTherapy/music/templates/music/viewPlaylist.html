@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
 </head>
 
+<body>
 <div class="center">
 <h2>View all your playlists</h2>
 
@@ -18,7 +19,8 @@
     <p>No playlists are available.</p>
 {% endif %}
 
-<p><a href="{% url 'music:createPlaylist' %}" class="button">Create Playlist</a></p>
+<p><a href="{% url 'music:createPlaylist' %}" class="inlinebutton">Create Playlist</a></p>
+</body>
 
 </div>
 </html>
