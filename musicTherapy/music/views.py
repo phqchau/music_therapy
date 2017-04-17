@@ -102,7 +102,7 @@ def chooseArtists(request):
 	if age:
 		age = int(age)
 	request.session['age'] = age
-	artists = controller.artists_from_year_range_and_genres(sp, genresFetched, age)
+	artists = controller.artists_from_year_range_and_genres(sp, genres, age)
 	artist_list = []
 	#ArtistSeeds.objects.all().delete()
 	for artist_id, artist_name in artists.items():
