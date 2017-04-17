@@ -102,11 +102,13 @@ def chooseArtists(request):
 		artist_list = []
 
 		for artist_id, artist_name in artists.items():
-			request.session['artist'] = (artist_id, artist_name)
 			artist_list.append(artist_name)
+
+		sorted_artist_list = sorted(artist_list)
+		request.session['artist'] = sorted_artist_list
 	except:
 		return render(request, 'music/createPlaylist.html', {'genres': genres, 'error_message': "Oops, either you didn't provide enough information or your search didn't return any artist. Please try a different search."})
-	return render(request, 'music/chooseArtists.html', {'artist_list':artist_list})
+	return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list})
 
 def processPlaylist(request):
 	try:
@@ -147,11 +149,9 @@ def processPlaylist(request):
 		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 
 	except:
-		artist_list = []
 		if request.session.has_key('artist'):
-			artist_id, artist_name = request.session['artist']
-			artist_list.append(artist_name)
-		return render(request, 'music/chooseArtists.html', {'artist_list':artist_list,'error_message': "You didn't provide a playlist name."})		
+			sorted_artist_list = request.session['artist']
+		return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list,'error_message': "You didn't provide a playlist name or pick any artist."})		
 
 def viewPlaylist(request):
 	if request.session.has_key('user_id'):
