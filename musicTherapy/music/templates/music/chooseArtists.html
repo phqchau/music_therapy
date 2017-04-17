@@ -8,7 +8,7 @@
 <div class="center">
 	<h2>Please choose up to five artists below</h2>
 
-	{% if error_message %}<h2><strong>{{ error_message }}</strong></h2>{% endif %}
+	{% if error_message %}<h3><strong>{{ error_message }}</strong></h3>{% endif %}
 
 	<form action="{% url 'music:processPlaylist' %}" method="post">
 		{% csrf_token %}
