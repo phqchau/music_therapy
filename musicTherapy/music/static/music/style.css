@@ -50,7 +50,7 @@ h2 {
     text-decoration: none;
     font-size: 16px;
     border-radius: 25px;
-    position:relative;
+    position: relative;
     left: 31%;
     margin-top: 15px;
     cursor: pointer;
@@ -73,7 +73,6 @@ input[type=submit] {
     text-decoration: none;
     font-size: 16px;
     border-radius: 25px;
-    position:relative;
     cursor:pointer;
     text-align: center;
     left: 31%;
