@@ -104,7 +104,7 @@ def chooseArtists(request):
 
 		for artist_id, artist_name in artists.items():
 			artist_list.append(artist_name)
-			artist_id_list.append(tuple(artist_id, artist_name))
+			artist_id_list.append(tuple((artist_id, artist_name)))
 
 		sorted_artist_list = sorted(artist_list)
 		request.session['artist'] = artist_id_list
