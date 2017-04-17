@@ -143,13 +143,13 @@ def processPlaylist(request):
 				artist_id = request.session['artist'][0]
 				artist_ids.append(artist_id)
 
+		playlist_id = controller.create_playlist(sp, pname, age, genresFetched, artist_ids)
+
 		playlist_object = Playlists(playlist_id=playlist_id, user_id=user_id)
 		playlist_object.save()
 
 		seedsForPlaylist = SeedsForPlaylist(playlist=playlist_object, playlist_name=pname, age=age, genres=genres, artist_ids=artist_ids)
 		seedsForPlaylist.save()
-
-		playlist_id = controller.create_playlist(sp, pname, age, genresFetched, artist_ids)
 
 		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 
