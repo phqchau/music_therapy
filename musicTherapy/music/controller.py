@@ -3,25 +3,21 @@ import datetime
 import spotipy
 import spotipy.util as util
 import music.secrets as secrets
-
-def show_tracks(tracks):
-	for i, item in enumerate(tracks['items']):
-		track = item['track']
-		print ("   %d %32.32s %s" % (i, track['artists'][0]['name'],
-			track['name']))
 			
+'''
+authenticate the user given an access token, access private playlists and gain ability to modify them
+create a Spotify object used to call all the necessary Spotipy functions in later portions of code
+'''
 def authenticate_user(token):
 	scope = "playlist-read-private playlist-modify-private"
 	sp = spotipy.Spotify(auth=token)
 	return sp
-
-	
-def display_playlists(sp):
-	playlists = sp.current_user_playlists()
-	print("Playlists:")
-	for playlist in playlists["items"]:
-		print(playlist["name"])
 		
+'''
+uses Spotipy's recommendations function to generate up to 30 tracks using the user's selected genres and artists
+creates a playlist and adds those tracks to the playlist
+returns the playlist id so it can be recorded as one of the user's created playlists and accessed later
+'''
 def create_playlist(sp, name, age, genres, artist_ids):
 	user_id = sp.current_user()["id"]
 
@@ -38,42 +34,22 @@ def create_playlist(sp, name, age, genres, artist_ids):
 	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
 	
 	return playlist_id
-	
-def display_playlist_tracks(sp, playlist_id):
-	userID = sp.current_user()["id"]
-	results = sp.user_playlist(userID, playlist_id, fields="tracks,next")
-	tracks = results["tracks"]
-	show_tracks(tracks)
-	while tracks["next"]:
-		tracks = sp.next(tracks)
-		show_tracks(tracks)
 
-# returns min: the year the user was 15, and max: the year the user was 25		
+'''
+return min: the year the user was 15, and max: the year the user was 25
+called by artists_from_year-range_and_genres
+'''	
 def get_year_range(age):
 	current_year = datetime.datetime.today().year
 	min = current_year - age + 15
 	max = current_year - age + 25
 	return [min, max]
 	
-def albums_from_year_range(sp, range):
-	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=10)
-	print(results)
-	albums = results['albums']['items']
-	#while results['next']:
-	#	albums.extend(results['items'])
-
-	for album in albums:
-		print(album['name'])
-		for artist in album['artists']:
-			print(artist['name'])
-	
 '''			
-fetch 50 albums from time period
-pull list of artists from albums (no various artists)
-for each artist:
-	for each genre:
-		check if it's one of the approved ones, if so put artist in new list
-use genre, random 4 artists from new list for recommendation seeds
+uses a Spotify search query to find up to 20 artists per genre in the given year range
+if fewer than 5 artists produced from this search, uses genres without year ranges
+returns dictionary of artist ids mapped to artist names, users select up to 5 names, and
+the associated ids are given to create_playlist
 '''		
 def artists_from_year_range_and_genres(sp, genres, age):
 		artists = {}
@@ -95,3 +71,27 @@ def artists_from_year_range_and_genres(sp, genres, age):
 						artists[artist['id']] = artist['name']
 		
 		return artists
+
+'''
+functions below were used primarily for testing purposes
+'''		
+def show_tracks(tracks):
+	for i, item in enumerate(tracks['items']):
+		track = item['track']
+		print ("   %d %32.32s %s" % (i, track['artists'][0]['name'],
+			track['name']))
+			
+def display_playlists(sp):
+	playlists = sp.current_user_playlists()
+	print("Playlists:")
+	for playlist in playlists["items"]:
+		print(playlist["name"])
+		
+def display_playlist_tracks(sp, playlist_id):
+	userID = sp.current_user()["id"]
+	results = sp.user_playlist(userID, playlist_id, fields="tracks,next")
+	tracks = results["tracks"]
+	show_tracks(tracks)
+	while tracks["next"]:
+		tracks = sp.next(tracks)
+		show_tracks(tracks)
