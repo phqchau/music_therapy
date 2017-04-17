@@ -30,9 +30,9 @@ def index(request):
 	question = get_object_or_404(Question, pk=question_id)
 	return render(request, 'music/detail.html', {'question':question})'''
 
-def play(request):
-	user_id = "1262880145"
-	playlist_id = request.GET.get('playlist_id')
+def play(request, playlist_id):
+	if request.session.has_key('user_id'):
+		user_id = request.session['user_id']
 	if not playlist_id:
 		playlist_id = "1AE5848cn7V6qHwriTAOZR"
 	playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
@@ -82,7 +82,7 @@ def getUserInfo(request):
 
 	request.session['user_id'] = user_id
 
-	return HttpResponseRedirect(reverse('music:createPlaylist'))
+	return HttpResponseRedirect(reverse('music:viewPlaylist'))
 
 def createPlaylist(request):
 	return render(request, 'music/createPlaylist.html', {'genres': genres, 'artists':artists, 'tracks':tracks})
@@ -143,13 +143,13 @@ def processPlaylist(request):
 				artist_id = request.session['artist'][0]
 				artist_ids.append(artist_id)
 
-		playlist_id = controller.create_playlist(sp, pname, age, genres, artist_ids)
-
 		playlist_object = Playlists(playlist_id=playlist_id, user_id=user_id)
 		playlist_object.save()
 
 		seedsForPlaylist = SeedsForPlaylist(playlist=playlist_object, playlist_name=pname, age=age, genres=genres, artist_ids=artist_ids)
 		seedsForPlaylist.save()
+
+		playlist_id = controller.create_playlist(sp, pname, age, genresFetched, artist_ids)
 
 		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 
@@ -164,4 +164,15 @@ def processPlaylist(request):
 
 
 def viewPlaylist(request):
-	return HttpResponse("You're looking at Something new?")
+	if request.session.has_key('user_id'):
+		user_id = request.session['user_id']
+	list_of_playlists = Playlists.objects.filter(user_id=user_id)
+	list_of_playlist_tuples = []
+	for playlist in list_of_playlists:
+		Seeds = SeedsForPlaylist.objects.get(playlist=playlist)
+		playlist_id = playlist.playlist_id
+		playlist_name = Seeds.playlist_name
+		list_of_playlist_tuples.append((playlist_name,playlist_id))
+
+	#return HttpResponse(list_of_playlist_tuples)
+	return render(request, 'music/viewPlaylist.html', {'list_of_playlist_tuples':list_of_playlist_tuples})		

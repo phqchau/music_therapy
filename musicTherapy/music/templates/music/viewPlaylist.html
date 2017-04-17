@@ -1,0 +1,13 @@
+<h1>View all your playlists</h1>
+
+<a href="{% url 'music:createPlaylist' %}">Create Playlist</a>
+
+{% if list_of_playlist_tuples %}
+    <ul>
+    {% for pname,pid in list_of_playlist_tuples %}
+        <li><a href="/music/{{ pid }}/play">{{ pname }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No playlists are available.</p>
+{% endif %}

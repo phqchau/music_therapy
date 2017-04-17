@@ -26,5 +26,5 @@ urlpatterns = [
 	url(r'^chooseArtists/$', views.chooseArtists, name='chooseArtists'),	
 
 	# ex: /music/play/
-	url(r'^play/$', views.play, name='play'),	
+	url(r'^(?P<playlist_id>[0-9a-zA-Z]+)/play/$', views.play, name='play'),	
 ]
