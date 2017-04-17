@@ -2,10 +2,10 @@ import sys
 import datetime
 import spotipy
 import spotipy.util as util
+import music.secrets as secrets
 
-
-SPOTIPY_CLIENT_ID = '63dcea5ff7b040db9bd57e6f446fdc2a'
-SPOTIPY_CLIENT_SECRET = 'e70126784b314724805ceb93bc813b33'
+SPOTIPY_CLIENT_ID = secrets.SPOTIPY_CLIENT_ID
+SPOTIPY_CLIENT_SECRET = secrets.SPOTIPY_CLIENT_SECRET
 CACHE = '.spotipyauthcache'
 
 def show_tracks(tracks):
