@@ -23,6 +23,7 @@ a {
 h2 {
     font-family: 'Lato', sans-serif;
     color: white;
+    font-size: 1em !important;
 }
 
 h1 {
@@ -74,4 +75,5 @@ input[type=submit] {
     cursor:pointer;
     text-align: center;
     left: 31%;
+    padding: 15px 32px;
 }

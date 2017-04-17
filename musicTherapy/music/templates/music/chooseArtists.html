@@ -13,36 +13,36 @@
 	<form action="{% url 'music:processPlaylist' %}" method="post">
 		{% csrf_token %}
 		<p>Recommended Artists:</p>
-		<select name="artists1">
+		<p><select name="artists1">
 		<option value='none' selected>none</option>
 		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
-		</select>
-		<select name="artists2">
+		</select></p>
+		<p><select name="artists2">
 		<option value='none' selected>none</option>
 		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
-		</select>
-		<select name="artists3">
+		</select></p>
+		<p><select name="artists3">
 		<option value='none' selected>none</option>
 		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
-		</select>
-		<select name="artists4">
+		</select></p>
+		<p><select name="artists4">
 		<option value='none' selected>none</option>
 		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
-		</select>
-		<select name="artists5">
+		</select></p>
+		<p><select name="artists5">
 		<option value='none' selected>none</option>
 		{% for artist in artist_list %}
 		<option value="{{artist}}">{{artist}}</option>
 		{% endfor %}
-		</select>
+		</select></p>
 		<p>Playlist Name:</p><input type="text" name="playlistName">
 		<p><input type="submit" value="Create Playlist"></p>
 </form>
