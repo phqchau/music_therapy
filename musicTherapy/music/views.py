@@ -105,7 +105,7 @@ def chooseArtists(request):
 			request.session['artist'] = (artist_id, artist_name)
 			artist_list.append(artist_name)
 	except:
-		return render(request, 'music/createPlaylist.html', {'genres': genres, 'error_message': "You didn't provide enough information. All fields are required."})
+		return render(request, 'music/createPlaylist.html', {'genres': genres, 'error_message': "Oops, either you didn't provide enough information or your search didn't return any artist. Please try a different search."})
 	return render(request, 'music/chooseArtists.html', {'artist_list':artist_list})
 
 def processPlaylist(request):
