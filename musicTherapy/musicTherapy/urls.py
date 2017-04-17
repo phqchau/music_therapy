@@ -16,9 +16,6 @@ Including another URLconf
 from django.conf.urls import include, url
 
 urlpatterns = [
+    url(r'^musictherapy.pythonanywhere.com/',include('music.urls')),
     url(r'^music/', include('music.urls')),
-    url(r'^callback.html/', include('music.urls')),
-    url(r'^createPlaylist.html/', include('music.urls')),
-    url(r'^about.html/', include('music.urls')),
-    url(r'^music/callback/', include('music.urls')),
 ]

@@ -1,4 +1,12 @@
-<h1>View all your playlists</h1>
+{% load static %}
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
+</head>
+
+<div class="center">
+<h2>View all your playlists</h2>
 
 <a href="{% url 'music:createPlaylist' %}">Create Playlist</a>
 
@@ -11,3 +19,6 @@
 {% else %}
     <p>No playlists are available.</p>
 {% endif %}
+
+</div>
+</html>
