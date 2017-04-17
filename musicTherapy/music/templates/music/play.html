@@ -1,11 +1,9 @@
-<!-- <h1> A Play Button </h1> -->
+{% load static %}
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}" />
+</head>
 
 <iframe src="https://embed.spotify.com/?uri={{playlist_uri}}" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>
-
-<!--
-<ul>
-	{% for choice in question.choice_set.all %}
-	<li>{{ choice.choice_text }}</li>
-	{% endfor %}
-</ul>
--->
+</html>
