@@ -65,10 +65,10 @@ def display_playlist_tracks(sp, playlist_id):
 		show_tracks(tracks)
 
 # returns min: the year the user was 15, and max: the year the user was 25		
-def get_year_range(age, upperLimit):
+def get_year_range(age):
 	current_year = datetime.datetime.today().year
 	min = current_year - age + 15
-	max = current_year - age + upperLimit
+	max = current_year - age + 25
 	return min, max
 	
 def albums_from_year_range(sp, range):
@@ -83,11 +83,18 @@ def albums_from_year_range(sp, range):
                 for artist in album['artists']:
                         print(artist['name'])
 	
+'''			
+fetch 50 albums from time period
+pull list of artists from albums (no various artists)
+for each artist:
+	for each genre:
+		check if it's one of the approved ones, if so put artist in new list
+use genre, random 4 artists from new list for recommendation seeds
+'''		
 def artists_from_year_range_and_genres(sp, genres, age):
         artists = {}
-        upperLimit = 25
+        year_range = get_year_range(age)
         while len(artists) < 5:
-                year_range = get_year_range(age, upperLimit)
                 results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]), type='album',limit=50)
 
                 albums = results['albums']['items']
@@ -107,96 +114,7 @@ def artists_from_year_range_and_genres(sp, genres, age):
                 for artist in bad_artists:		
                         del artists[artist]
 
-                year_range[1] += 10
+                year_range[0] -= 10
+				year_range[1] += 10
 			
 	return artists
-
-			
-'''			
-fetch 50 albums from time period
-pull list of artists from albums (no various artists)
-for each artist:
-	for each genre:
-		check if it's one of the approved ones, if so put artist in new list
-use genre, random 4 artists from new list for recommendation seeds
-'''		
-
-def upvote(sp, playlist_id, track_id):
-	user_id = sp.current_user()["id"]
-	
-	recommended_tracks = sp.recommendations(seed_tracks=[track_id], limit=5)["tracks"]	
-	track_uris = []
-	for track in recommended_tracks:
-		track_uris.append(track["uri"])
-	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
-
-def downvote(sp, track_id, playlist_id, genres):
-        user_id = sp.current_user()["id"]
-
-        sp.display_playlist_tracks(sp, playlist_id)
-
-        for i in sp.audio_features(track_id):
-                danceability = i["danceability"]
-                energy = i["energy"]
-                mode = i["mode"]
-                speechiness = i["speechiness"]
-                acousticness = i["acousticness"]
-                instrumentalness = i["instrumentalness"]
-                liveness = i["liveness"]
-                valence = i["valence"]
-                tempo = i["tempo"]
-
-                danceability = 1 - danceability
-                energy = 1 - energy
-                mode = 1 - mode
-                speechiness = 1 - speechiness
-                acousticness = 1 - acousticness
-                instrumentalness = 1 - instrumentalness
-                liveness = 1 - liveness
-                valence = 1 - valence
-
-        if tempo >= 114:
-                i = 0
-                tempoLimit = 114
-                results = sp.recommendations(seed_genres = genres, limit = 100, max_tempo = tempoLimit,
-                                             target_danceability = danceability, target_energy = energy,
-                                             target_mode = mode, target_speechiness = speechiness,
-                                             target_acousticness = acousticness, target_instrumentalness = instrumentalness,
-                                             target_liveness = liveness, target_valence = valence)["tracks"]
-                for track in results:
-                        if i == 5:
-                                break
-                        else:
-                                addTrack = {track["id"]}
-                                sp.user_playlist_add_tracks(user_id, playlist_id, addTrack)
-                        i += 1
-        else:
-                i = 0
-                tempoLimit = 114
-                results = sp.recommendations(seed_genres = genres, limit = 100, max_tempo = tempoLimit,
-                                             target_danceability = danceability, target_energy = energy,
-                                             target_mode = mode, target_speechiness = speechiness,
-                                             target_acousticness = acousticness, target_instrumentalness = instrumentalness,
-                                             target_liveness = liveness, target_valence = valence)["tracks"]
-                for track in results:
-                        if i ==5:
-                                break
-                        else:
-                                addTrack = {track["id"]}
-                                sp.user_playlist_add_tracks(user_id, playlist_id, addTrack)
-                        i += 1
-
-        removeTrack = {track_id}
-        sp.user_playlist_remove_all_occurrences_of_tracks(user_id, playlist_id, removeTrack)
-
-        display_playlist_tracks(sp, playlist_id)
-	
-if __name__ == '__main__':
-	sp = authenticate_user("fcurrin")
-	user_id = sp.current_user()["id"]
-
-	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
-    
-	display_playlist_tracks(sp, new_playlist)
-	
-	#artists_from_year_range_and_genres(sp, get_year_range(90), ["jazz", "big band", "classical"])

@@ -4,10 +4,6 @@ import spotipy
 import spotipy.util as util
 import music.secrets as secrets
 
-SPOTIPY_CLIENT_ID = secrets.SPOTIPY_CLIENT_ID
-SPOTIPY_CLIENT_SECRET = secrets.SPOTIPY_CLIENT_SECRET
-CACHE = '.spotipyauthcache'
-
 def show_tracks(tracks):
 	for i, item in enumerate(tracks['items']):
 		track = item['track']
@@ -16,7 +12,6 @@ def show_tracks(tracks):
 			
 def authenticate_user(token):
 	scope = "playlist-read-private playlist-modify-private"
-	#token = util.prompt_for_user_token(username, scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI)
 	sp = spotipy.Spotify(auth=token)
 	return sp
 
@@ -27,15 +22,10 @@ def display_playlists(sp):
 	for playlist in playlists["items"]:
 		print(playlist["name"])
 		
-def create_playlist(sp, name, age, genres):
+def create_playlist(sp, name, age, genres, artist_ids):
 	user_id = sp.current_user()["id"]
 
 	year_range = get_year_range(age)
-
-	artists = artists_from_year_range_and_genres(sp, year_range, genres)
-	while len(artists) > 5:
-		artists.popitem()
-	artist_ids = artists.keys()
 	
 	recommended_tracks = sp.recommendations(seed_genres=genres, seed_artists=artist_ids, limit=30)["tracks"]
 
@@ -77,30 +67,6 @@ def albums_from_year_range(sp, range):
 		for artist in album['artists']:
 			print(artist['name'])
 	
-def artists_from_year_range_and_genres(sp, range, genres):
-	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=50)
-
-	albums = results['albums']['items']
-
-	artists = {}
-	for album in albums:
-		for artist in album['artists']:
-			if artist['id'] not in artists.keys():
-				artists[artist['id']] = artist['name']
-	
-	bad_artists = []
-			
-	for id in artists.keys():
-		current_artist = sp.artist(id)
-		if set(genres).isdisjoint(set(current_artist['genres'])):
-			bad_artists.append(current_artist['id'])
-	
-	for artist in bad_artists:		
-		del artists[artist]
-		
-	return artists
-
-			
 '''			
 fetch 50 albums from time period
 pull list of artists from albums (no various artists)
@@ -109,22 +75,30 @@ for each artist:
 		check if it's one of the approved ones, if so put artist in new list
 use genre, random 4 artists from new list for recommendation seeds
 '''		
+def artists_from_year_range_and_genres(sp, genres, age):
+        artists = {}
+        year_range = get_year_range(age)
+        while len(artists) < 5:
+                results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]), type='album',limit=50)
 
-def upvote(sp, playlist_id, track):
-	user_id = sp.current_user()["id"]
-	
-	recommended_tracks = sp.recommendations(seed_tracks=[track], limit=5)["tracks"]	
-	track_uris = []
-	for track in recommended_tracks:
-		track_uris.append(track["uri"])
-	sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
-	
-if __name__ == '__main__':
-	sp = authenticate_user("fcurrin")
-	user_id = sp.current_user()["id"]
+                albums = results['albums']['items']
 
-	new_playlist = create_playlist(sp, "test_artists_90", 90, ["jazz", "big band", "classical"])
-    
-	display_playlist_tracks(sp, new_playlist)
+                for album in albums:
+                        for artist in album['artists']:
+                                if artist['id'] not in artists.keys():
+                                        artists[artist['id']] = artist['name']
 	
-	#artists_from_year_range_and_genres(sp, get_year_range(90), ["jazz", "big band", "classical"])
+                bad_artists = []
+			
+                for id in artists.keys():
+                        current_artist = sp.artist(id)
+                        if set(genres).isdisjoint(set(current_artist['genres'])):
+                                bad_artists.append(current_artist['id'])
+	
+                for artist in bad_artists:		
+                        del artists[artist]
+
+                year_range[0] -= 10
+				year_range[1] += 10
+			
+	return artists
