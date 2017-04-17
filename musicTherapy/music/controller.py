@@ -93,7 +93,8 @@ def artists_from_year_range_and_genres(sp, genres, age):
 				for artist in results['artists']['items']:
 					if artist['id'] not in artists.keys():
 						artists[artist['id']] = artist['name']
-		if len(artists) > 15:
+
+		if len(artists) > 10:
 			artists.popitem()
 		
 		return artists
