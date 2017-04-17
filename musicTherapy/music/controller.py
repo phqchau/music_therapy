@@ -84,7 +84,9 @@ def artists_from_year_range_and_genres(sp, genres, age):
 				for artist in results['artists']['items']:
 					if artist['id'] not in artists.keys():
 						artists[artist['id']] = artist['name']
-			
+			except:
+				continue
+
 		if len(artists) < 5:
 			for genre in genres:
 				results = sp.search(q='genre:' + genre, type='album',limit=50)
