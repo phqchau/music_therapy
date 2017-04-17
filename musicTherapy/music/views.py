@@ -22,7 +22,7 @@ def callback(request):
 
 def index(request):
 	#latest_question_list = Question.objects.order_by('-pub_date')[:5]
-	redirect_uri = 'http://localhost:8080/music/authUser/'
+	redirect_uri = 'http://musictherapy.pythonanywhere.com/music/authUser/'
 	context = {'redirect_uri': redirect_uri,}
 	return render(request, 'music/index.html', context)
 
