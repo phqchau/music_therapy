@@ -120,40 +120,40 @@ def processPlaylist(request):
 			artist = request.POST['artists' + str(i)]
 			if artist != 'none':
 				artistsFetched.append(artist)
+
+		if request.session.has_key('user_id'):
+			user_id = request.session['user_id']
+		if request.session.has_key('access_token'):
+			access_token = request.session['access_token']
+		sp = controller.authenticate_user(access_token)
+
+		if request.session.has_key('genres'):
+			genres = request.session['genres']
+		if request.session.has_key('age'):
+			age = request.session['age']
+
+		artist_ids = []
+		for artist in artistsFetched:
+			if request.session.has_key('artist'):
+				for artist_id_name in request.session['artist']:
+					if artist_id_name[1] == artist:
+						artist_ids.append(artist_id_name[0])
+
+		playlist_id = controller.create_playlist(sp, pname, age, genres, artist_ids)
+
+		playlist_object = Playlists(playlist_id=playlist_id, user_id=user_id)
+		playlist_object.save()
+
+		seedsForPlaylist = SeedsForPlaylist(playlist=playlist_object, playlist_name=pname, age=age, genres=genres, artist_ids=artist_ids)
+		seedsForPlaylist.save()
+
+		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
+
+		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 	except:
 		if request.session.has_key('artist'):
 			sorted_artist_list = request.session['artist']
-		return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list,'error_message': "You didn't provide a playlist name or pick any artist."})
-
-	if request.session.has_key('user_id'):
-		user_id = request.session['user_id']
-	if request.session.has_key('access_token'):
-		access_token = request.session['access_token']
-	sp = controller.authenticate_user(access_token)
-
-	if request.session.has_key('genres'):
-		genres = request.session['genres']
-	if request.session.has_key('age'):
-		age = request.session['age']
-
-	artist_ids = []
-	for artist in artistsFetched:
-		if request.session.has_key('artist'):
-			for artist_id_name in request.session['artist']:
-				if artist_id_name[1] == artist:
-					artist_ids.append(artist_id_name[0])
-
-	playlist_id = controller.create_playlist(sp, pname, age, genres, artist_ids)
-
-	playlist_object = Playlists(playlist_id=playlist_id, user_id=user_id)
-	playlist_object.save()
-
-	seedsForPlaylist = SeedsForPlaylist(playlist=playlist_object, playlist_name=pname, age=age, genres=genres, artist_ids=artist_ids)
-	seedsForPlaylist.save()
-
-	playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
-
-	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
+		return render(request, 'music/chooseArtists.html', {'artist_list':sorted_artist_list,'error_message': "You didn't provide a playlist name."})
 
 def viewPlaylist(request):
 	if request.session.has_key('user_id'):
