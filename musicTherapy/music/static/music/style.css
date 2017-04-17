@@ -39,6 +39,22 @@ h3 {
     font-size: 20px;
 }
 
+.withtextbutton {
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    background-color: #4CAF50;
+    border: none;
+    display: inline-block;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 25px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
 .inlinebutton {
     font-family: 'Lato', sans-serif;
     font-weight: bold;
@@ -53,7 +69,7 @@ h3 {
     border-radius: 25px;
     margin-top: 15px;
     cursor: pointer;
-    margin-left: 38%;
+    margin-left: 35%;
 }
 
 .button {
