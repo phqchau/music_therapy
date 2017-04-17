@@ -17,21 +17,18 @@ genres = ['afrobeat', 'alt-rock', 'alternative', 'black-metal', 'bluegrass', 'bl
 artists = []
 tracks = []
 
-def callback(request):
-    return render(request, 'music/spotifyLoginFinish.html',{})
-
 def index(request):
 	redirect_uri = 'http://musictherapy.pythonanywhere.com/music/authUser/'
 	context = {'redirect_uri': redirect_uri,}
 	return render(request, 'music/index.html', context)
 
-def play(request, playlist_id):
+'''def play(request, playlist_id):
 	if request.session.has_key('user_id'):
 		user_id = request.session['user_id']
 	if not playlist_id:
 		playlist_id = "1AE5848cn7V6qHwriTAOZR"
 	playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
-	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
+	return render(request, 'music/play.html', {'playlist_uri':playlist_uri})'''
 
 def authUser(request):
 	if request.method == 'GET':
