@@ -9,7 +9,7 @@
 <div class="center">
 <h2>Please enter the details for playlist creation</h2>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if error_message %}<h2><strong>{{ error_message }}</strong></h2>{% endif %}
 
 <form action="{% url 'music:chooseArtists' %}" method="post">
 {% csrf_token %}
