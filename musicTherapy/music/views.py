@@ -13,7 +13,7 @@ import ast
 # Create your views here.
 SPOTIPY_CLIENT_ID = secrets.SPOTIPY_CLIENT_ID
 SPOTIPY_CLIENT_SECRET = secrets.SPOTIPY_CLIENT_SECRET
-genres = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime', 'black-metal', 'bluegrass', 'blues', 'bossanova', 'brazil', 'breakbeat', 'british', 'cantopop', 'chicago-house', 'children', 'chill', 'classical', 'club', 'comedy', 'country', 'dance', 'dancehall', 'death-metal', 'deep-house', 'detroit-techno', 'disco', 'disney', 'drum-and-bass', 'dub', 'dubstep', 'edm', 'electro', 'electronic', 'emo', 'folk', 'forro', 'french', 'funk', 'garage', 'german', 'gospel', 'goth', 'grindcore', 'groove', 'grunge', 'guitar', 'happy', 'hard-rock', 'hardcore', 'hardstyle', 'heavy-metal', 'hip-hop', 'holidays', 'honky-tonk', 'house', 'idm', 'indian', 'indie', 'indie-pop', 'industrial', 'iranian', 'j-dance', 'j-idol', 'j-pop', 'j-rock', 'jazz', 'k-pop', 'kids', 'latin', 'latino', 'malay', 'mandopop', 'metal', 'metal-misc', 'metalcore', 'minimal-techno', 'movies', 'mpb', 'new-age', 'new-release', 'opera', 'pagode', 'party', 'philippines-opm', 'piano', 'pop', 'pop-film', 'post-dubstep', 'power-pop', 'progressive-house', 'psych-rock', 'punk', 'punk-rock', 'r-n-b', 'rainy-day', 'reggae', 'reggaeton', 'road-trip', 'rock', 'rock-n-roll', 'rockabilly', 'romance', 'sad', 'salsa', 'samba', 'sertanejo', 'show-tunes', 'singer-songwriter', 'ska', 'sleep', 'songwriter', 'soul', 'soundtracks', 'spanish', 'study', 'summer', 'swedish', 'synth-pop', 'tango', 'techno', 'trance', 'trip-hop', 'turkish', 'work-out', 'world-music']
+genres = ['afrobeat', 'alt-rock', 'alternative', 'black-metal', 'bluegrass', 'blues', 'bossanova', 'brazil', 'breakbeat', 'british', 'cantopop', 'chicago-house', 'children', 'chill', 'classical', 'club', 'comedy', 'country', 'dance', 'dancehall', 'death-metal', 'deep-house', 'disco', 'disney', 'drum-and-bass', 'dub', 'dubstep', 'edm', 'electro', 'electronic', 'emo', 'folk', 'forro', 'french', 'funk', 'garage', 'german', 'gospel', 'goth', 'groove', 'guitar', 'happy', 'hard-rock', 'hardcore', 'hardstyle', 'heavy-metal', 'hip-hop', 'holidays', 'honky-tonk', 'house', 'idm', 'indian', 'indie', 'indie-pop', 'industrial', 'iranian', 'j-pop', 'j-rock', 'jazz', 'k-pop', 'kids', 'latin', 'latino', 'malay', 'mandopop', 'metal', 'metalcore', 'minimal-techno', 'movies', 'mpb', 'new-age', 'new-release', 'opera', 'pagode', 'party', 'philippines-opm', 'piano', 'pop', 'pop-film', 'post-dubstep', 'power-pop', 'progressive-house', 'psych-rock', 'punk', 'punk-rock', 'r-n-b', 'rainy-day', 'reggae', 'reggaeton', 'road-trip', 'rock', 'rock-n-roll', 'rockabilly', 'romance', 'sad', 'salsa', 'samba', 'sertanejo', 'show-tunes', 'ska', 'sleep', 'soul', 'soundtracks', 'spanish', 'study', 'summer', 'swedish', 'synth-pop', 'tango', 'techno', 'trance', 'trip-hop', 'turkish', 'work-out', 'world-music']
 artists = []
 tracks = []
 
@@ -102,8 +102,7 @@ def chooseArtists(request):
 	if age:
 		age = int(age)
 	request.session['age'] = age
-	year_range = controller.get_year_range(age)
-	artists = controller.artists_from_year_range_and_genres(sp, year_range, genresFetched)
+	artists = controller.artists_from_year_range_and_genres(sp, genresFetched, age)
 	artist_list = []
 	#ArtistSeeds.objects.all().delete()
 	for artist_id, artist_name in artists.items():
@@ -131,7 +130,6 @@ def processPlaylist(request):
 			access_token = request.session['access_token']
 		sp = controller.authenticate_user(access_token)
 
-		#new_playlist = controller.create_playlist(sp, pname, age, genresFetched)
 		if request.session.has_key('genres'):
 			genres = request.session['genres']
 		if request.session.has_key('age'):
@@ -145,22 +143,13 @@ def processPlaylist(request):
 				artist_id = request.session['artist'][0]
 				artist_ids.append(artist_id)
 
-		recommended_tracks = sp.recommendations(seed_genres=genres, seed_artists=artist_ids, limit=30)['tracks']
-
-		track_uris = []
-		for track in recommended_tracks:
-			track_uris.append(track["uri"])
-		
-		playlist = sp.user_playlist_create(user_id, pname, public=False)
-		playlist_id = playlist["id"]
-
 		playlist_object = Playlists(playlist_id=playlist_id, user_id=user_id)
 		playlist_object.save()
 
 		seedsForPlaylist = SeedsForPlaylist(playlist=playlist_object, playlist_name=pname, age=age, genres=genres, artist_ids=artist_ids)
 		seedsForPlaylist.save()
 
-		sp.user_playlist_add_tracks(user_id, playlist_id, track_uris)
+		playlist_id = controller.create_playlist(sp, pname, age, genresFetched, artist_ids)
 
 		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 

@@ -53,7 +53,7 @@ def get_year_range(age):
 	current_year = datetime.datetime.today().year
 	min = current_year - age + 15
 	max = current_year - age + 25
-	return min, max
+	return [min, max]
 	
 def albums_from_year_range(sp, range):
 	results = sp.search(q='year:' + str(range[0]) + '-' + str(range[1]), type='album',limit=10)
@@ -76,29 +76,17 @@ for each artist:
 use genre, random 4 artists from new list for recommendation seeds
 '''		
 def artists_from_year_range_and_genres(sp, genres, age):
-        artists = {}
-        year_range = get_year_range(age)
-        while len(artists) < 5:
-                results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]), type='album',limit=50)
-
-                albums = results['albums']['items']
-
-                for album in albums:
-                        for artist in album['artists']:
-                                if artist['id'] not in artists.keys():
-                                        artists[artist['id']] = artist['name']
-	
-                bad_artists = []
-			
-                for id in artists.keys():
-                        current_artist = sp.artist(id)
-                        if set(genres).isdisjoint(set(current_artist['genres'])):
-                                bad_artists.append(current_artist['id'])
-	
-                for artist in bad_artists:		
-                        del artists[artist]
-
-                year_range[0] -= 10
-				year_range[1] += 10
-			
-	return artists
+		artists = {}
+		year_range = get_year_range(age)
+		for genre in genres:
+			results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]) + ' genre:' + genre, type='artist',limit=50)
+			for artist in results['artists']['items']:
+				if artist['id'] not in artists.keys():
+					artists[artist['id']] = artist['name']
+		if len(artists) < 5:
+			for genre in genres:
+				results = sp.search(q='genre:' + genre, type='album',limit=50)
+				for artist in results['artists']['items']:
+					if artist['id'] not in artists.keys():
+						artists[artist['id']] = artist['name']
+		return artists
