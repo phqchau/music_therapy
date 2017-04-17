@@ -79,10 +79,12 @@ def artists_from_year_range_and_genres(sp, genres, age):
 		artists = {}
 		year_range = get_year_range(age)
 		for genre in genres:
-			results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]) + ' genre:' + genre, type='artist',limit=50)
-			for artist in results['artists']['items']:
-				if artist['id'] not in artists.keys():
-					artists[artist['id']] = artist['name']
+			try:
+				results = sp.search(q='year:' + str(year_range[0]) + '-' + str(year_range[1]) + ' genre:' + genre, type='artist',limit=50)
+				for artist in results['artists']['items']:
+					if artist['id'] not in artists.keys():
+						artists[artist['id']] = artist['name']
+			
 		if len(artists) < 5:
 			for genre in genres:
 				results = sp.search(q='genre:' + genre, type='album',limit=50)
