@@ -13,7 +13,7 @@
 
 <form action="{% url 'music:chooseArtists' %}" method="post">
 {% csrf_token %}
-	<p>Age:</p><input type="number" name="age" min="1" max="110">
+	<p>Age:</p><input type="number" name="age" min="40" max="100">
 	{% if genres %}
 	<p>Genres (choose up to five):</p><select name="genres1">
 		<option value='none' selected>none</option>
