@@ -144,10 +144,6 @@ def processPlaylist(request):
 
 		playlist_uri = "open.spotify.com/user/" + user_id + "/playlist/" + playlist_id
 
-		#clear the session keeping the seeds info
-		if request.session.has_key('genres'): del request.session['genres']
-		if request.session.has_key('age'): del request.session['age']
-		if request.session.has_key('artist'): del request.session['artist']
 		return render(request, 'music/play.html', {'playlist_uri':playlist_uri})
 
 	except:
@@ -167,5 +163,10 @@ def viewPlaylist(request):
 		playlist_id = playlist.playlist_id
 		playlist_name = Seeds.playlist_name
 		list_of_playlist_tuples.append((playlist_name,playlist_id))
+
+	#clear the session keeping the seeds info
+	if request.session.has_key('genres'): del request.session['genres']
+	if request.session.has_key('age'): del request.session['age']
+	if request.session.has_key('artist'): del request.session['artist']
 
 	return render(request, 'music/viewPlaylist.html', {'list_of_playlist_tuples':list_of_playlist_tuples})		
