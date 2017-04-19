@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'q7vr$$zgx3*12pw0twq6w7#$gn@!g53l+*5kmcb7ll&=-8%-co'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['musictherapy.pythonanywhere.com', 'localhost']
 
