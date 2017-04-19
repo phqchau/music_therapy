@@ -1,4 +1,4 @@
 # music_therapy
-Web app that takes user inputs to get songs from their past.
+Web app that lets user get songs from their past.
 
 Try it <a href="http://musictherapy.pythonanywhere.com/">here</a>.
